@@ -7,16 +7,16 @@
     <a href="">
       <img src="https://img.shields.io/github/last-commit/psp515/PicoLamp" alt="last update" />
     </a>
-    <a href="https://github.com/psp515/MicroPico/network/members">
+    <a href="https://github.com/psp515/PicoLamp/network/members">
       <img src="https://img.shields.io/github/forks/psp515/PicoLamp" alt="forks" />
     </a>
-    <a href="https://github.com/psp515/MicroPico/stargazers">
+    <a href="https://github.com/psp515/PicoLamp/stargazers">
       <img src="https://img.shields.io/github/stars/psp515/PicoLamp" alt="stars" />
     </a>
-    <a href="https://github.com/psp515/MicroPico/issues/">
+    <a href="https://github.com/psp515/PicoLamp/issues/">
       <img src="https://img.shields.io/github/issues/psp515/PicoLamp" alt="open issues" />
     </a>
-    <a href="https://github.com/psp515/MicroPico/blob/master/LICENSE">
+    <a href="https://github.com/psp515/PicoLamp/blob/main/LICENSE">
       <img src="https://img.shields.io/github/license/psp515/PicoLamp" alt="license" />
     </a>
   </div>
