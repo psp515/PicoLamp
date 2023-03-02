@@ -1,0 +1,17 @@
+Rodzaje zmian stanów
+
+off -> on
+on -> off
+
+
+
+on -> mode 1 -> mode 2 -> off
+
+w powyrzszej sytuacji w trakcie wykonywania mode end i start nie da sie nic zrobić
+
+
+on -> mode 1 -> mode 1 mod -> off
+
+w powyższej sytuacji system ma 'dynamicznie' zmienic mode
+
+czyli mode ma tak jakby state i designated state
