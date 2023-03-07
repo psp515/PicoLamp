@@ -3,6 +3,7 @@ from app import App
 
 import gc
 
+from driver.device import Device
 from driver.tools.logger import Logger
 from driver.tools.logger_enum import LoggerEnum
 
@@ -19,6 +20,12 @@ if __name__ == '__main__':
         # TODO initialize elements
         # TODO connect to wifi
         # TODO connect to mqtt client
+
+        neopixel = None
+
+        ir = None
+
+        device = Device()
 
         app = App()
 

@@ -1,5 +1,11 @@
 
 
 class Device:
-    "Class created for gathering all sub-devices used by RPPW"
-    pass
+    """
+    Class created for accessing connected sub devices like Neopixel rings.
+    """
+    def __init__(self, neopixels, ir, led, uart):
+        self.neopixels = neopixels
+        self.ir = ir
+        self.led = led
+        self.uart = uart
