@@ -15,15 +15,15 @@ if __name__ == '__main__':
     gc.collect()
 
     try:
-        # TODO initialize elements
         # Devices
 
         uart = UART(0, tx=Pin(0), rx=Pin(1))
         led = Pin("LED", Pin.OUT)
         led.low()
 
+        # TODO
         neopixel = None
-
+        # TODO
         ir = None
 
         device = Device(neopixel, ir, led, uart)
@@ -49,6 +49,8 @@ if __name__ == '__main__':
             logger.log(f"Not Connected. Status: {wlan.status()}. ", LoggerEnum.WARNING)
 
         # TODO: connect to mqtt client
+
+
 
 
         # TODO: initialize default mode

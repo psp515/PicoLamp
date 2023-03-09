@@ -1,15 +1,11 @@
-# NeoPixel driver for MicroPython
-# MIT license; Copyright (c) 2016 Damien P. George, 2021 Jim Mussared
-
 from machine import bitstream
-
-# TODO delete
 
 class NeoPixel:
     # G R B W
     ORDER = (1, 0, 2, 3)
 
     def __init__(self, pin, n, bpp=3, timing=1):
+        self._brightness = 1
         self.pin = pin
         self.n = n
         self.bpp = bpp
@@ -29,7 +25,7 @@ class NeoPixel:
     def __setitem__(self, i, v):
         offset = i * self.bpp
         for i in range(self.bpp):
-            self.buf[offset + self.ORDER[i]] = v[i]
+            self.buf[offset + self.ORDER[i]] = int(v[i] * self._brightness)
 
     def __getitem__(self, i):
         offset = i * self.bpp
@@ -40,7 +36,7 @@ class NeoPixel:
         l = len(self.buf)
         bpp = self.bpp
         for i in range(bpp):
-            c = v[i]
+            c = int(v[i] * self._brightness)
             j = self.ORDER[i]
             while j < l:
                 b[j] = c
@@ -49,3 +45,11 @@ class NeoPixel:
     def write(self):
         # BITSTREAM_TYPE_HIGH_LOW = 0
         bitstream(self.pin, 0, self.timing, self.buf)
+
+    @property
+    def brightness(self):
+        return self._brightness
+
+    @brightness.setter
+    def brightness(self, value):
+        self._brightness = min(max(0, value), 1)

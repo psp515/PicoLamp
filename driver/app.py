@@ -1,3 +1,10 @@
+from network import WLAN
+
+from client.hivemq_client import HivemqMQTTClient
+from device import Device
+from device_state import DeviceState
+from modes.mode_thread import ModeThread
+from tools.logger import Logger
 
 
 class App:
@@ -19,9 +26,24 @@ class App:
         self.device = device
         self.topics = topics
 
+    def mqtt_state(self, json, device_state: DeviceState):
+        pass
+
+    def mqtt_mode(self):
+        pass
+
+    def ir_state(self):
+        pass
+
+    def ir_mode(self):
+        pass
+
     def start(self):
 
-        #TODO start second thread
+
+
+        mode_thread = ModeThread()
+        ModeThread.start()
 
         while True:
             if self.wlan.isconnected():
