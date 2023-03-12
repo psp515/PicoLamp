@@ -17,7 +17,7 @@ class Device:
         self._uart = uart
 
     @property
-    def neopixels(self):
+    def strip(self):
         return self._neopixels
 
     @property

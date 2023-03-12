@@ -1,13 +1,16 @@
+from enums.device_state_enum import DeviceStateEnum
 
 
 class DeviceState:
-    """Class purpose is to represent state of the device"""
-    def __init__(self, n_of_groups):
+    """Class purpose is to represent designated state of the device."""
+    def __init__(self, n):
         self.brightness = 1
-        self.groups_state = [True] * n_of_groups
-        self.change_mode = False
-        self.new_mode = None # ENUM??
-        self.new_mode_additional_data = None
-        self.is_on = False
-        self.update_mode = False
-        self.update_json = None
+        self.speed = 255
+        self.groups_state = [True] * n
+
+        self.status = DeviceStateEnum.OFF
+
+        self.mode_json = ""
+        self.update_json = ""
+
+        self.push_device_state = False

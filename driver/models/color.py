@@ -24,5 +24,7 @@ class Color:
         return self._name
 
     @property
-    def color(self):
+    def rgb_color(self):
         return self._r, self._g, self._b
+
+

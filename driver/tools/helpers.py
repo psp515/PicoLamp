@@ -1,12 +1,18 @@
-from ujson import loads
+from exception.setup_error import SetupError
 
 
-def read_json(filename: str):
-    return_data = None
+def generate_groups(sizes: [], total_length: int):
+    groups = []
+    length = 0
 
-    with open(filename) as file:
-        data = file.read()
-        string_data = str(data)
-        return_data = loads(string_data)
+    if len(sizes) == 0:
+        SetupError("Invalid number of groups.")
 
-    return return_data
+    for size in sizes:
+        groups.append([length + i for i in range(size)])
+        length += size
+
+    if length != total_length:
+        SetupError("Invalid number of led-s in groups.")
+
+    return groups

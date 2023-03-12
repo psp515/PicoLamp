@@ -1,32 +1,45 @@
 from machine import Pin, UART, reset
+from neopixel import NeoPixel
+
 from app import App
 from utime import sleep
 
 import gc
 import network
 
+from client.hivemq_client import HivemqMQTTClient
 from device import Device
+from device_state import DeviceState
 from exception.setup_error import SetupError
+from tools.helpers import generate_groups
 from tools.logger import Logger
-from tools.logger_enum import LoggerEnum
-from tools.helpers import read_json
+from enums.logger_enum import LoggerEnum
+from tools.config_readers import read_json, read_colors
+import globals
+
 
 if __name__ == '__main__':
     gc.collect()
 
     try:
-        # Devices
+        # Others
+        globals.device_colors = read_colors("config/colors.json")
 
+        # Device
         uart = UART(0, tx=Pin(0), rx=Pin(1))
         led = Pin("LED", Pin.OUT)
         led.low()
 
-        # TODO
-        neopixel = None
-        # TODO
+        strip_data = read_json("conf/strip.json")
+
+        neopixel = NeoPixel(strip_data["pin"], strip_data["size"])
+        device_state = DeviceState(strip_data["size"])
+        groups = generate_groups(strip_data["groups"], strip_data["size"])
+
+        #TODO
         ir = None
 
-        device = Device(neopixel, ir, led, uart)
+        device = Device(neopixel, groups, ir, led, uart)
         logger = Logger(device)
 
         # WIFI
@@ -48,20 +61,22 @@ if __name__ == '__main__':
         if not wlan.isconnected():
             logger.log(f"Not Connected. Status: {wlan.status()}. ", LoggerEnum.WARNING)
 
-        # TODO: connect to mqtt client
+        # Client
 
+        data = read_json("config/hivemq.json")
+        client = HivemqMQTTClient(data, logger, device_state)
 
+        # start app
 
-
-        # TODO: initialize default mode
-
-        app = App()
-
+        app = App(device, device_state, logger, client, wlan, colors)
         app.start()
+
     except OSError as e:
-        logger.log(e, LoggerEnum.CONNECTION_ERROR)
+        logger.log(str(e), LoggerEnum.CONNECTION_ERROR)
+    except SetupError as e:
+        logger.log(str(e), LoggerEnum.SETUP_ERROR)
     except Exception as e:
-        logger.log(e, LoggerEnum.ERROR)
+        logger.log(str(e), LoggerEnum.ERROR)
     finally:
         sleep(3)
         reset()

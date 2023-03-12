@@ -1,8 +1,7 @@
-from machine import Pin, UART
 from utime import sleep
 
 from device import Device
-from logger_enum import LoggerEnum
+from enums.logger_enum import LoggerEnum
 
 
 class Logger:

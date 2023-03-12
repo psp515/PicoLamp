@@ -1,6 +1,6 @@
 from device import Device
 from device_state import DeviceState
-from modes.mode_state_enum import ModeStateEnum
+from enums.mode_state_enum import ModeStateEnum
 
 
 class Mode:
@@ -10,7 +10,7 @@ class Mode:
 
     def __init__(self, device: Device,
                  device_state: DeviceState):
-        self.device_state = device_state
+        self._device_state = device_state
         self._device = device
         self.state = ModeStateEnum.START
 
@@ -24,6 +24,9 @@ class Mode:
         pass
 
     def end_step(self):
+        pass
+
+    def update_brightness(self):
         pass
 
     def update(self, json):

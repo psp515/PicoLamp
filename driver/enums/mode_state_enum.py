@@ -4,4 +4,4 @@ class ModeStateEnum:
     NORMAL = 2,
     UPDATE = 3,
     END = 4,
-    CHANGE_MODE = 5
+    OFF = 5
