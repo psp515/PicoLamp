@@ -1,4 +1,4 @@
-from machine import Pin, UART, reset
+from machine import Pin, reset
 from neopixel import NeoPixel
 
 from app import App
@@ -11,6 +11,7 @@ from client.hivemq_client import HivemqMQTTClient
 from device import Device
 from device_state import DeviceState
 from exception.setup_error import SetupError
+from subdevices.nec_receiver.nec_receiver import NECReceiver
 from tools.helpers import generate_groups
 from tools.logger import Logger
 from enums.logger_enum import LoggerEnum
@@ -36,8 +37,8 @@ if __name__ == '__main__':
         device_state = DeviceState(strip_data["size"])
         groups = generate_groups(strip_data["groups"], strip_data["size"])
 
-        #TODO
-        ir = None
+        ir_data = read_json("config/pilot.json")
+        ir = NECReceiver(device_state, logger, ir_data["Pin"])
 
         device = Device(neopixel, groups, ir, led)
         logger = Logger(device)
@@ -61,11 +62,13 @@ if __name__ == '__main__':
         if not wlan.isconnected():
             logger.log(f"Not Connected. Status: {wlan.status()}. ", LoggerEnum.WARNING)
 
-        # Client
+        # HiveMQ Client
 
         data = read_json("config/hivemq.json")
         client = HivemqMQTTClient(data, logger, device_state)
         client.connect()
+
+        # Ir NEC 'Client'
 
         # start app
 
