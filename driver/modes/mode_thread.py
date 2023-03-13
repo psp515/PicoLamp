@@ -18,29 +18,26 @@ class ModeThread:
         self.device_state = device_state
         self._mode = ConstantColor(device, device_state)
 
-    def start(self):
-        _thread.start_new_thread(self._loop(), ())
-
-    def _loop(self):
+    def loop(self):
         while True:
-            if self.device_state.status == DeviceStateEnum.OFF:
-                if self._mode.state != ModeStateEnum.END and self._mode.state != ModeStateEnum.OFF:
-                    self._mode.state = ModeStateEnum.END
-
-                if self._mode.state == ModeStateEnum.END:
-                    self._mode.end_step()
-
-            elif self.device_state.status == DeviceStateEnum.NEW_MODE:
-                # TODO: 2 options animate leaving or quick change.
-
-                self.device_state.status = DeviceStateEnum.ON
-            elif self.device_state.status == DeviceStateEnum.UPDATE_MODE:
+            if self.device_state.state == DeviceStateEnum.OFF:
+                if self._mode.state != ModeStateEnum.ENDING and self._mode.state != ModeStateEnum.OFF:
+                    self._mode.end()
+            elif self.device_state.state == DeviceStateEnum.NEW_MODE:
+                # TODO: change mode
+                self.device_state.state = DeviceStateEnum.ON
+            elif self.device_state.state == DeviceStateEnum.UPDATE_MODE:
                 self._mode.update(self.device_state.update_json)
-                self.device_state.status = DeviceStateEnum.ON
-            else:
-                if self._mode.state == ModeStateEnum.START:
-                    self._mode.start_step()
-                elif self._mode.state == ModeStateEnum.UPDATE:
-                    self._mode.update_step()
-                else:
-                    self._mode.step()
+                self.device_state.state = DeviceStateEnum.ON
+            elif self.device_state.state == DeviceStateEnum.STARTING:
+                self.device_state.state = DeviceStateEnum.ON
+                self._mode.start()
+
+            if self._mode.state == ModeStateEnum.STARTING:
+                self._mode.start_step()
+            elif self._mode.state == ModeStateEnum.UPDATE:
+                self._mode.update_step()
+            elif self._mode.state == ModeStateEnum.ENDING:
+                self._mode.end_step()
+            elif self._mode.state == ModeStateEnum.NORMAL:
+                self._mode.step()

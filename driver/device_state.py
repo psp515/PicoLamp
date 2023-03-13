@@ -5,10 +5,10 @@ class DeviceState:
     """Class purpose is to represent designated state of the device."""
     def __init__(self, n):
         self.brightness = 1
-        self.speed = 255
+        self.speed = 128
         self.groups_state = [True] * n
 
-        self.status = DeviceStateEnum.OFF
+        self.state = DeviceStateEnum.OFF
 
         self.mode_json = ""
         self.update_json = ""

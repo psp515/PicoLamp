@@ -10,8 +10,7 @@ class Logger:
 
     def log(self, message: str, information: LoggerEnum):
         print(message)
-        self._device.uart.write(message)
-        self._blink(information)
+        self._blink(information.value)
 
     def _blink(self, n: int):
         for i in range(n):
@@ -19,3 +18,4 @@ class Logger:
             sleep(0.1)
             self._device.led.value(0)
             sleep(0.1)
+

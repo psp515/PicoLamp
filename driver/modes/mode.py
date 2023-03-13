@@ -12,7 +12,7 @@ class Mode:
                  device_state: DeviceState):
         self._device_state = device_state
         self._device = device
-        self.state = ModeStateEnum.START
+        self.state = ModeStateEnum.OFF
 
     def start_step(self):
         pass
@@ -28,6 +28,12 @@ class Mode:
 
     def update_brightness(self):
         pass
+
+    def end(self):
+        self.state = ModeStateEnum.ENDING
+
+    def start(self):
+        self.state = ModeStateEnum.STARTING
 
     def update(self, json):
         self.state = ModeStateEnum.UPDATE

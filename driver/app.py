@@ -1,9 +1,11 @@
+import _thread
+
 from network import WLAN
 from utime import sleep
 
 from client.hivemq_client import HivemqMQTTClient
 from device import Device
-from device_management import mqtt_state, mqtt_mode
+from device_management import mqtt_state, mqtt_mode, mqtt_ping
 from device_state import DeviceState
 from modes.mode_thread import ModeThread
 from tools.logger import Logger
@@ -22,9 +24,7 @@ class App:
                  device_state: DeviceState,
                  logger: Logger,
                  client: HivemqMQTTClient,
-                 wlan: WLAN,
-                 colors: []):
-        self.colors = colors
+                 wlan: WLAN):
         self.device_state = device_state
         self.wlan = wlan
         self.client = client
@@ -35,15 +35,15 @@ class App:
     def start(self):
         # TODO: add states, get like get config
 
-        topics = ["state", "mode"]
-        mqtt = [("state", mqtt_state), ("mode", mqtt_mode)]
+        topics = ["state", "mode", "ping"]
+        mqtt = [("state", mqtt_state), ("mode", mqtt_mode), ("ping", mqtt_ping)]
 
         for topic, func in mqtt:
             self.client.watch_topic(topic, func)
 
         #TODO: add ir topics
 
-        self.mode_thread.start()
+        _thread.start_new_thread(self.mode_thread.loop, ())
 
         while True:
             if self.wlan.isconnected():

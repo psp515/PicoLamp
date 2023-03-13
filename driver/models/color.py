@@ -27,4 +27,11 @@ class Color:
     def rgb_color(self):
         return self._r, self._g, self._b
 
+    def same(self, color):
+        for a, b in zip(color.rgb_color, self.rgb_color):
+            if a != b:
+                return False
+
+        return True
+
 

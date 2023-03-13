@@ -26,25 +26,25 @@ if __name__ == '__main__':
         globals.device_colors = read_colors("config/colors.json")
 
         # Device
-        uart = UART(0, tx=Pin(0), rx=Pin(1))
         led = Pin("LED", Pin.OUT)
         led.low()
 
-        strip_data = read_json("conf/strip.json")
+        strip_data = read_json("config/strip.json")
 
-        neopixel = NeoPixel(strip_data["pin"], strip_data["size"])
+        neopixel_pin = Pin(strip_data["pin"])
+        neopixel = NeoPixel(neopixel_pin, strip_data["size"])
         device_state = DeviceState(strip_data["size"])
         groups = generate_groups(strip_data["groups"], strip_data["size"])
 
         #TODO
         ir = None
 
-        device = Device(neopixel, groups, ir, led, uart)
+        device = Device(neopixel, groups, ir, led)
         logger = Logger(device)
-
+        logger.log("Logger is working!", LoggerEnum.INFO)
         # WIFI
 
-        wlan_data = read_json("conf/secrets.json")
+        wlan_data = read_json("config/secrets.json")
 
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
@@ -65,10 +65,12 @@ if __name__ == '__main__':
 
         data = read_json("config/hivemq.json")
         client = HivemqMQTTClient(data, logger, device_state)
+        client.connect()
 
         # start app
 
-        app = App(device, device_state, logger, client, wlan, colors)
+        app = App(device, device_state, logger, client, wlan)
+        logger.log("App starting!", LoggerEnum.INFO)
         app.start()
 
     except OSError as e:
