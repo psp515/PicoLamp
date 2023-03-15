@@ -69,7 +69,7 @@ if __name__ == '__main__':
         client.connect()
 
         # Ir NEC 'Client'
-
+        #TODO: pass client to app
         # start app
 
         app = App(device, device_state, logger, client, wlan)

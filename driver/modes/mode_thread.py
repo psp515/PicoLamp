@@ -33,6 +33,8 @@ class ModeThread:
                 self.device_state.state = DeviceStateEnum.ON
                 self._mode.start()
 
+            # TODO Refactor put it in mode class
+
             if self._mode.state == ModeStateEnum.STARTING:
                 self._mode.start_step()
             elif self._mode.state == ModeStateEnum.UPDATE:

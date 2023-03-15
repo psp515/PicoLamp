@@ -22,6 +22,8 @@ class NECReceiver:
         self._timer = Timer(-1)
         self._callback = None
         self._state = SubdeviceState.ON
+        self._last_command = -1
+        self._last_address = -1
 
     def _trigger_callback(self):
         pulse = ticks_us()
