@@ -22,15 +22,20 @@ import globals
 if __name__ == '__main__':
     gc.collect()
 
+    led = Pin("LED", Pin.OUT)
+    led.low()
+    logger = Logger(led)
+    logger.log("Logger is working!", LoggerEnum.INFO)
+
     try:
         # Others
         globals.device_colors = read_colors("config/colors.json")
+        # TODO Validate
 
         # Device
-        led = Pin("LED", Pin.OUT)
-        led.low()
 
         strip_data = read_json("config/strip.json")
+        # TODO Validate
 
         neopixel_pin = Pin(strip_data["pin"])
         neopixel = NeoPixel(neopixel_pin, strip_data["size"])
@@ -38,15 +43,15 @@ if __name__ == '__main__':
         groups = generate_groups(strip_data["groups"], strip_data["size"])
 
         ir_data = read_json("config/pilot.json")
+        # TODO Validate
         ir = NECReceiver(device_state, logger, ir_data["Pin"])
 
-        device = Device(neopixel, groups, ir, led)
-        logger = Logger(device)
-        logger.log("Logger is working!", LoggerEnum.INFO)
+        device = Device(neopixel, groups, ir)
+
         # WIFI
 
         wlan_data = read_json("config/secrets.json")
-
+        # TODO Validate
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
 
@@ -65,11 +70,13 @@ if __name__ == '__main__':
         # HiveMQ Client
 
         data = read_json("config/hivemq.json")
+        # TODO Validate
         client = HivemqMQTTClient(data, logger, device_state)
         client.connect()
 
         # Ir NEC 'Client'
         #TODO: pass client to app
+        # TODO: use ir_data
         # start app
 
         app = App(device, device_state, logger, client, wlan)

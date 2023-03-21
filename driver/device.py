@@ -7,12 +7,10 @@ class Device:
     """
     def __init__(self, neopixels: NeoPixel,
                  np_groups: [],
-                 ir_receiver,
-                 led: Pin):
+                 ir_receiver):
         self._neopixels = neopixels
         self._np_groups = np_groups
         self._ir_receiver = ir_receiver
-        self._led = led
 
     @property
     def strip(self):
@@ -29,6 +27,3 @@ class Device:
     def ir_receiver(self):
         return self._ir_receiver
 
-    @property
-    def led(self):
-        return self._led
