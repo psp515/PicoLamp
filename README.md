@@ -60,8 +60,8 @@ TBA.
 
 Process | State |
 :-: | :-: |
-Set up, Requirements, Planning | 🚧 |
-Creating Driver | ❌|
+Set up, Requirements, Planning | ✔️ |
+Creating Driver | 🚧|
 Documantation | ❌ |
 Lamp 3D Model | ❌ |
 Testing, Conclusions | ❌ |
