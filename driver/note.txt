@@ -15,3 +15,20 @@ on -> mode 1 -> mode 1 mod -> off
 w powyższej sytuacji system ma 'dynamicznie' zmienic mode
 
 czyli mode ma tak jakby state i designated state
+
+
+
+
+
+Modes:
+Static:
+- Constant color
+- Wifi Quality
+Dynamic:
+- RGB
+- Loading
+- Blinking
+- Instant blinking
+- Spinning
+- Torch
+- Fade

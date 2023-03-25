@@ -10,7 +10,10 @@ from tools.logger import Logger
 
 
 def configure_mqtt(client: HivemqMQTTClient):
-    mqtt = [("state", mqtt_state), ("mode", mqtt_mode), ("ping", mqtt_ping)]
+    mqtt = [("state", mqtt_state),
+            ("mode", mqtt_mode),
+            ("ping", mqtt_ping),
+            ("update_mode", mqtt_update_mode)]
 
     for topic, func in mqtt:
         client.watch_topic(topic, func)
@@ -37,6 +40,17 @@ def mqtt_state(json: str, device_state: DeviceState, logger: Logger):
         device_state.state = DeviceStateEnum.OFF
     elif data["state"] == 1 and device_state.state == DeviceStateEnum.OFF:
         device_state.state = DeviceStateEnum.STARTING
+
+
+def mqtt_update_mode(json: str, device_state: DeviceState, logger: Logger):
+    data = loads(json)
+
+    binary_data = data["groups_state"]
+    device_state.groups_state = [bool(bit) for bit in binary_data]
+    device_state.brightness = data["brightness"]
+    device_state.update_json(json)
+
+    device_state.state = DeviceStateEnum.UPDATE_MODE
 
 
 def mqtt_mode(json: str, device_state: DeviceState, logger: Logger):
