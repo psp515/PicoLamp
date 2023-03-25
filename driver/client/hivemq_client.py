@@ -1,16 +1,17 @@
 from umqtt.simple import MQTTClient
+
+from client.watch_client import WatchClient
 from device_state import DeviceState
 from tools.logger import Logger
 from enums.logger_enum import LoggerEnum
 
 
-class HivemqMQTTClient:
+class HivemqMQTTClient(WatchClient):
     client: MQTTClient
     _data = {}
 
     def __init__(self, data, logger: Logger, device_state: DeviceState):
-        self._logger = logger
-        self._device_state = device_state
+        super().__init__(device_state, logger)
         self._data = data
 
         self.client = self.client = MQTTClient(
@@ -24,7 +25,6 @@ class HivemqMQTTClient:
             ssl_params={"server_hostname": str(data["ssl_params_server_hostname"])})
 
         self.client.set_callback(self._callback)
-        self._topics = {}
 
     def connect(self):
         self.client.connect()
@@ -39,9 +39,6 @@ class HivemqMQTTClient:
 
         self._logger.log(f"Data from topic '{topic}' received.", LoggerEnum.INFO)
         self._topics[topic](data, self._device_state, self._logger)
-
-    def watch_topic(self, topic, callback):
-        self._topics[topic] = callback
 
     def publish(self, topic, message):
         self.client.publish(topic, message)

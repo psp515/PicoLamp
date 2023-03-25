@@ -4,6 +4,7 @@ from network import WLAN
 from utime import sleep
 
 from client.hivemq_client import HivemqMQTTClient
+from client.nec_client import NECClient
 from device import Device
 from device_management import mqtt_state, mqtt_mode, mqtt_ping
 from device_state import DeviceState
@@ -24,30 +25,24 @@ class App:
                  device_state: DeviceState,
                  logger: Logger,
                  client: HivemqMQTTClient,
+                 mqtt_topics: [],
+                 nec_client: NECClient,
                  wlan: WLAN):
         self.device_state = device_state
         self.wlan = wlan
         self.client = client
+        self.nec_client = nec_client
         self.logger = logger
         self.device = device
         self.mode_thread = ModeThread(device, device_state)
+        self.topics = mqtt_topics
 
     def start(self):
-        # TODO: add states, get like get config
-
-        topics = ["state", "mode", "ping"]
-        mqtt = [("state", mqtt_state), ("mode", mqtt_mode), ("ping", mqtt_ping)]
-
-        for topic, func in mqtt:
-            self.client.watch_topic(topic, func)
-
-        #TODO: add ir topics
-
         _thread.start_new_thread(self.mode_thread.loop, ())
 
         while True:
             if self.wlan.isconnected():
-                for topic in topics:
+                for topic in self.topics:
                     self.client.subscribe(topic)
 
                 if self.device_state.push_device_state:

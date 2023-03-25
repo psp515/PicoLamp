@@ -1,21 +1,32 @@
 from machine import Timer, Pin
 from utime import ticks_us, ticks_diff
 
-from const import TRIGGER_TIME_MS, START_MIN_ONE_BIT_US, PULSES, START_MAX_REPEAT_ZERO_BIT_US, REPEAT_PULSES, \
-    ZERO_BIT_US
-from device_state import DeviceState
 from enums.receiver_enum import ReceiveState
 from enums.subdevice_state import SubdeviceState
 from tools.ir_rx_message import IRReceiveMessage
-from tools.logger import Logger
+
+
+BITS = 32 + 2
+PULSES = BITS * 2
+REPEAT_PULSES = 4
+
+TRIGGER_TIME_MS = 70
+
+START_MIN_ONE_BIT_US = 6000
+START_MIN_ZERO_BIT_US = 2500
+START_MAX_REPEAT_ZERO_BIT_US = 2500
+
+REPEAT_US = 2500
+
+# 562.5 us 1 state and 562.5 us 0 state
+ZERO_BIT_US = 1125
+
+# 562.5 us 1 state and 1687.5 us 0 state
+ONE_BIT_US = 2250
 
 
 class NECReceiver:
-    def __init__(self, device_state: DeviceState,
-                 logger: Logger,
-                 pin: int):
-        self.logger = logger
-        self.device_state = device_state
+    def __init__(self, pin: int):
         self._initialized_pin = Pin(pin, Pin.IN)
         self._initialized_pin.irq(trigger=(Pin.IRQ_FALLING | Pin.IRQ_RISING), handler=self._trigger_callback)
         self._pulses = []
@@ -25,7 +36,7 @@ class NECReceiver:
         self._last_command = -1
         self._last_address = -1
 
-    def _trigger_callback(self):
+    def _trigger_callback(self, pin):
         pulse = ticks_us()
 
         if self._state is SubdeviceState.BUSY:
@@ -95,7 +106,7 @@ class NECReceiver:
             message = IRReceiveMessage(e.args[0])
 
         self._state = SubdeviceState.ON
-        self.callback(self.device_state, self.logger, message)
+        self.callback(message)
 
     def _get_byte(self, start: int, stop: int, array: []):
         value = 0

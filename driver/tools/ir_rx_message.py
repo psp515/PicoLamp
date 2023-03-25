@@ -1,4 +1,4 @@
-from src.enums.receiver_enum import ReceiveState
+from enums.receiver_enum import ReceiveState
 
 
 class IRReceiveMessage:

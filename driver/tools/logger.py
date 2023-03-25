@@ -10,7 +10,7 @@ class Logger:
 
     def log(self, message: str, information: LoggerEnum):
         print(message)
-        self._blink(information.value)
+        self._blink(information)
 
     def _blink(self, n: int):
         for i in range(n):
