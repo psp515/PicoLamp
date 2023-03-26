@@ -14,6 +14,16 @@ class Mode:
         self._device = device
         self.state = ModeStateEnum.OFF
 
+    def loop(self):
+        if self.state == ModeStateEnum.STARTING:
+            self.start_step()
+        elif self.state == ModeStateEnum.UPDATE:
+            self.update_step()
+        elif self.state == ModeStateEnum.ENDING:
+            self.end_step()
+        elif self.state == ModeStateEnum.NORMAL:
+            self.step()
+
     def start_step(self):
         pass
 
@@ -35,5 +45,8 @@ class Mode:
     def start(self):
         self.state = ModeStateEnum.STARTING
 
-    def update(self, json):
+    def extended_update(self, json):
         self.state = ModeStateEnum.UPDATE
+
+    def refresh(self):
+        pass

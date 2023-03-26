@@ -3,6 +3,8 @@
 class DeviceStateEnum:
     OFF = 0,
     ON = 1,
-    NEW_MODE = 2,
-    UPDATE_MODE = 3,
-    STARTING = 4
+    STARTING = 2
+    NEW = 3,
+    UPDATE = 4,
+    EXTENDED_UPDATE = 5,
+
