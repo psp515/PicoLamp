@@ -12,7 +12,6 @@ class DeviceState:
         self.state = DeviceStateEnum.OFF
 
         self.mode = None
-        self.mode_json = ""
-        self.update_json = ""
+        self.json = None
 
         self.push_device_state = False

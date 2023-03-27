@@ -6,7 +6,7 @@ from utime import sleep
 from client.hivemq_client import HivemqMQTTClient
 from client.nec_client import NECClient
 from device import Device
-from device_management import mqtt_state, mqtt_mode, mqtt_ping
+from device_management import mqtt_state, mqtt_new_mode, mqtt_ping
 from device_state import DeviceState
 from modes.mode_thread import ModeThread
 from tools.logger import Logger

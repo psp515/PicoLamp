@@ -15,31 +15,20 @@ from device_state import DeviceState
 from exception.setup_error import SetupError
 from subdevices.nec_receiver.nec_receiver import NECReceiver
 from tools.helpers import generate_groups, validate_strip_config, validate_ir_config, validate_wlan_config, \
-    validate_hivemq_config
+    validate_hivemq_config, wait_for_connection
 from tools.logger import Logger
 from enums.logger_enum import LoggerEnum
 from tools.config_readers import read_json, read_colors
 import globals
 
-
-def wait_for_connection(wifi: network.WLAN):
-    sleep(1)
-    i = 0
-    while not wifi.isconnected() and i < 10:
-        logger.log(f"Not Connected. Status: {wifi.status()}. Awaiting.", LoggerEnum.WARNING)
-        i += 1
-        sleep(1)
-
-    if not wlan.isconnected():
-        logger.log(f"Not Connected. Status: {wlan.status()}. ", LoggerEnum.WARNING)
-
+DEBUG = True
 
 if __name__ == '__main__':
     gc.collect()
     used_pins = [25]
     led = Pin("LED", Pin.OUT)
     led.low()
-    logger = Logger(led)
+    logger = Logger(led, DEBUG)
     logger.log("Logger is working!", LoggerEnum.INFO)
 
     try:
@@ -72,7 +61,7 @@ if __name__ == '__main__':
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
         wlan.connect(wlan_config["ssid"], wlan_config["password"])
-        wait_for_connection(wlan)
+        wait_for_connection(wlan, logger)
 
         # HiveMQ Client
 

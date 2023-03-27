@@ -1,4 +1,7 @@
+from utime import sleep
+from enums.logger_enum import LoggerEnum
 from exception.setup_error import SetupError
+import network
 
 
 def generate_groups(sizes: [], total_length: int):
@@ -54,3 +57,15 @@ def validate_hivemq_config(config: {}):
                  "password", "keepalive", "ssl", "ssl_params_server_hostname"]:
         if config[name] is None:
             raise SetupError(f"Invalid hivemq config. (lack of {name})")
+
+
+def wait_for_connection(wifi: network.WLAN, logger: Logger):
+    sleep(1)
+    i = 0
+    while not wifi.isconnected() and i < 10:
+        logger.log(f"Not Connected. Status: {wifi.status()}. Awaiting.", LoggerEnum.WARNING)
+        i += 1
+        sleep(1)
+
+    if not wifi.isconnected():
+        logger.log(f"Not Connected. Status: {wifi.status()}. ", LoggerEnum.WARNING)

@@ -15,28 +15,6 @@ class Mode:
         self.state = ModeStateEnum.OFF
 
     def loop(self):
-        if self.state == ModeStateEnum.STARTING:
-            self.start_step()
-        elif self.state == ModeStateEnum.UPDATE:
-            self.update_step()
-        elif self.state == ModeStateEnum.ENDING:
-            self.end_step()
-        elif self.state == ModeStateEnum.NORMAL:
-            self.step()
-
-    def start_step(self):
-        pass
-
-    def step(self):
-        pass
-
-    def update_step(self):
-        pass
-
-    def end_step(self):
-        pass
-
-    def update_brightness(self):
         pass
 
     def end(self):
@@ -45,12 +23,9 @@ class Mode:
     def start(self):
         self.state = ModeStateEnum.STARTING
 
-    def extended_update(self, json):
-        self.state = ModeStateEnum.UPDATE
-
-    def update(self):
-        pass
+    def update(self, json):
+        self.state = ModeStateEnum.UPDATING
 
     def refresh_led(self):
-        pass
+        self.state = ModeStateEnum.UPDATING
 

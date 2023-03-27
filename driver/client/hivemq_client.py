@@ -38,6 +38,7 @@ class HivemqMQTTClient(WatchClient):
             return
 
         self._logger.log(f"Data from topic '{topic}' received.", LoggerEnum.INFO)
+        self._logger.log(data, LoggerEnum.DEBUG)
         self._topics[topic](data, self._device_state, self._logger)
 
     def publish(self, topic, message):

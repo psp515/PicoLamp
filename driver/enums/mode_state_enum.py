@@ -1,7 +1,7 @@
 
 class ModeStateEnum:
     STARTING = 1,
-    NORMAL = 2,
-    UPDATE = 3,
-    ENDING = 4,
+    UPDATING = 2,
+    ENDING = 3,
+    ON = 4,
     OFF = 5

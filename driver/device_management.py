@@ -11,9 +11,10 @@ from tools.logger import Logger
 
 def configure_mqtt(client: HivemqMQTTClient):
     mqtt = [("state", mqtt_state),
-            ("mode", mqtt_mode),
             ("ping", mqtt_ping),
-            ("update_mode", mqtt_update_mode)]
+            ("update_mode", mqtt_update_mode),
+            ("new_mode", mqtt_new_mode),
+            ("update_led", mqtt_update_led)]
 
     for topic, func in mqtt:
         client.watch_topic(topic, func)
@@ -37,7 +38,7 @@ def mqtt_state(json: str, device_state: DeviceState, logger: Logger):
     data = loads(json)
 
     if data["state"] == 0 and device_state.state == DeviceStateEnum.ON:
-        device_state.state = DeviceStateEnum.OFF
+        device_state.state = DeviceStateEnum.ENDING
     elif data["state"] == 1 and device_state.state == DeviceStateEnum.OFF:
         device_state.state = DeviceStateEnum.STARTING
 
@@ -50,33 +51,33 @@ def mqtt_update_mode(json: str, device_state: DeviceState, logger: Logger):
 
     device_state.old_brightness = device_state.brightness
     device_state.brightness = data["brightness"]
-    device_state.state = DeviceStateEnum.UPDATE
 
     if "extend" in data:
-        device_state.update_json = data["extend"]
-        device_state.state = DeviceStateEnum.EXTENDED_UPDATE
+        device_state.json = data["extend"]
+
+    device_state.state = DeviceStateEnum.UPDATE
 
 
-def mqtt_led(json: str, device_state: DeviceState, logger: Logger):
+def mqtt_update_led(json: str, device_state: DeviceState, logger: Logger):
     data = loads(json)
 
     if device_state.state == DeviceStateEnum.OFF:
         return
 
-    binary_data = data["groups_state"]
+    binary_data = data["states"]
     device_state.groups_state = [bool(bit) for bit in binary_data]
 
     device_state.state = DeviceStateEnum.LED_UPDATE
 
 
-def mqtt_mode(json: str, device_state: DeviceState, logger: Logger):
+def mqtt_new_mode(json: str, device_state: DeviceState, logger: Logger):
     data = loads(json)
 
     if device_state.state == DeviceStateEnum.OFF:
         return
 
     device_state.mode = data["mode"]
-    device_state.mode_json = data["mode_data"]
+    device_state.json = data["mode_data"]
 
     device_state.state = DeviceStateEnum.NEW
 

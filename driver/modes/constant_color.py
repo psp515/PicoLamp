@@ -6,6 +6,7 @@ from modes.mode import Mode
 from enums.mode_state_enum import ModeStateEnum
 
 
+# TODO: Fix
 class ConstantColor(Mode):
     color: ()
 
@@ -20,7 +21,7 @@ class ConstantColor(Mode):
 
         if self.itr == self._device_state.speed:
             self.itr = 0
-            self.state = ModeStateEnum.NORMAL
+            self.state = ModeStateEnum.ON
 
     def update_step(self):
         self.itr += 1
@@ -28,7 +29,7 @@ class ConstantColor(Mode):
 
         if self.itr == self._device_state.speed:
             self.itr = 0
-            self.state = ModeStateEnum.NORMAL
+            self.state = ModeStateEnum.ON
 
     def end_step(self):
         self.itr += 1
@@ -41,20 +42,22 @@ class ConstantColor(Mode):
     def update(self):
         for group, state in zip(self._device.np_groups, self._device_state.groups_state):
             for led_id in group:
-                self._device.strip[led_id] = \
-                    tuple([int(x * self._device_state.brightness) for x in self.color]) \
-                        if state else OFF_COLOR.rgb_color
+                if state:
+                    color = tuple([int(x * self._device_state.brightness) for x in self.color])
+                else:
+                    color = OFF_COLOR.rgb_color
+                self._device.strip[led_id] = color
 
         self._device.strip.write()
 
     def extended_update(self, data: {}):
-        self.state = ModeStateEnum.UPDATE
+        self.state = ModeStateEnum.UPDATING
         new_color = data["r"], data["g"], data["b"]
 
         if new_color != self.color:
             self.color = new_color
 
-        self.state = ModeStateEnum.UPDATE
+        self.state = ModeStateEnum.UPDATING
         self.itr = 0
 
     def end(self):

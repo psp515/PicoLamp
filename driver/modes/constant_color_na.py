@@ -1,5 +1,6 @@
 from device import Device
 from device_state import DeviceState
+from enums.mode_state_enum import ModeStateEnum
 from globals import DEFAULT_COLOR, OFF_COLOR
 from models.color import Color
 from modes.mode import Mode
@@ -10,24 +11,23 @@ class ConstantColorNA(Mode):
         super().__init__(device, device_state)
         self.color = color.rgb_color
 
-    def loop(self):
-        pass
-
     def start(self):
         self._write_color(self.color)
+        self.state = ModeStateEnum.ON
 
-    def update(self):
+    def update(self, json):
+        if json is not None:
+            self.color = tuple(json["color"])
         self._write_color(self.color)
-
-    def extended_update(self, json):
-        self.color = tuple(json["color"])
-        self._write_color(self.color)
+        self.state = ModeStateEnum.ON
 
     def refresh_led(self):
         self._write_color(self.color)
+        self.state = ModeStateEnum.ON
 
     def end(self):
         self._write_color(OFF_COLOR.rgb_color)
+        self.state = ModeStateEnum.OFF
 
     def _write_color(self, to_color):
         current_color = self._calc_color(to_color)
