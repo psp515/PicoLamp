@@ -38,7 +38,7 @@ class ConstantColor(Mode):
             self.itr = 0
             self.state = ModeStateEnum.OFF
 
-    def refresh(self):
+    def update(self):
         for group, state in zip(self._device.np_groups, self._device_state.groups_state):
             for led_id in group:
                 self._device.strip[led_id] = \
@@ -65,6 +65,12 @@ class ConstantColor(Mode):
         self.state = ModeStateEnum.STARTING
         self.itr = 0
 
+    def refresh_led(self):
+        for group, state in zip(self._device.np_groups, self._device_state.groups_state):
+            if not state:
+                for led_id in group:
+                    self._device.strip[led_id] = OFF_COLOR.rgb_color
+
     def _applicate(self, to_color: ()):
         for group, state in zip(self._device.np_groups, self._device_state.groups_state):
             for led_id in group:
@@ -76,7 +82,7 @@ class ConstantColor(Mode):
 
     def _get_factor(self, act, dest):
         n = self._device_state.speed
-        brightness = (self._device_state.brightness * self.itr + (n - self.itr) * self._device_state.old_brightness)/ n
-        color = (self.itr * dest + (n - self.itr) * act)/ n
-        return int(color * brightness)
+        brightness = (self._device_state.brightness * self.itr + (n - self.itr) * self._device_state.old_brightness) // n
+        color = (self.itr * dest + (n - self.itr) * act) // n
+        return color * brightness
 

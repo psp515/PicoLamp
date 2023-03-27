@@ -48,8 +48,6 @@ def mqtt_update_mode(json: str, device_state: DeviceState, logger: Logger):
     if device_state.state == DeviceStateEnum.OFF:
         return
 
-    binary_data = data["groups_state"]
-    device_state.groups_state = [bool(bit) for bit in binary_data]
     device_state.old_brightness = device_state.brightness
     device_state.brightness = data["brightness"]
     device_state.state = DeviceStateEnum.UPDATE
@@ -62,9 +60,25 @@ def mqtt_update_mode(json: str, device_state: DeviceState, logger: Logger):
 def mqtt_led(json: str, device_state: DeviceState, logger: Logger):
     data = loads(json)
 
+    if device_state.state == DeviceStateEnum.OFF:
+        return
+
+    binary_data = data["groups_state"]
+    device_state.groups_state = [bool(bit) for bit in binary_data]
+
+    device_state.state = DeviceStateEnum.LED_UPDATE
+
 
 def mqtt_mode(json: str, device_state: DeviceState, logger: Logger):
     data = loads(json)
+
+    if device_state.state == DeviceStateEnum.OFF:
+        return
+
+    device_state.mode = data["mode"]
+    device_state.mode_json = data["mode_data"]
+
+    device_state.state = DeviceStateEnum.NEW
 
 
 def mqtt_ping(json: str, device_state: DeviceState, logger: Logger):

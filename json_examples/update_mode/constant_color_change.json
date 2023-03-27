@@ -1,6 +1,5 @@
 {
     "brightness": 0.5,
-    "groups_state": [1, 0, 1],
     "extend":
     {
         "r":26,

@@ -1,6 +1,9 @@
 
 
+
+
 class DeviceStateEnum:
+    LED_UPDATE = 6,
     OFF = 0,
     ON = 1,
     STARTING = 2

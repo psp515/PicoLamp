@@ -48,5 +48,9 @@ class Mode:
     def extended_update(self, json):
         self.state = ModeStateEnum.UPDATE
 
-    def refresh(self):
+    def update(self):
         pass
+
+    def refresh_led(self):
+        pass
+
