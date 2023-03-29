@@ -56,6 +56,7 @@ class NECReceiver:
         self._callback = callback
 
     def _parse_data(self, timer):
+
         message = None
         pulses_count = len(self._pulses)
         try:

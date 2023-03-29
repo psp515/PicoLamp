@@ -4,7 +4,7 @@ from globals import DEFAULT_COLOR, OFF_COLOR
 from models.color import Color
 from modes.mode import Mode
 from enums.mode_state_enum import ModeStateEnum
-
+import ulab
 
 # TODO: Fix
 class ConstantColor(Mode):
@@ -19,7 +19,7 @@ class ConstantColor(Mode):
         self.itr += 1
         self._applicate(self.color)
 
-        if self.itr == self._device_state.speed:
+        if self.itr == self._desired_state.speed:
             self.itr = 0
             self.state = ModeStateEnum.ON
 
@@ -27,7 +27,7 @@ class ConstantColor(Mode):
         self.itr += 1
         self._applicate(self.color)
 
-        if self.itr == self._device_state.speed:
+        if self.itr == self._desired_state.speed:
             self.itr = 0
             self.state = ModeStateEnum.ON
 
@@ -35,15 +35,15 @@ class ConstantColor(Mode):
         self.itr += 1
         self._applicate(OFF_COLOR.rgb_color)
 
-        if self.itr == self._device_state.speed:
+        if self.itr == self._desired_state.speed:
             self.itr = 0
             self.state = ModeStateEnum.OFF
 
     def update(self):
-        for group, state in zip(self._device.np_groups, self._device_state.groups_state):
+        for group, state in zip(self._device.np_groups, self._desired_state.groups_state):
             for led_id in group:
                 if state:
-                    color = tuple([int(x * self._device_state.brightness) for x in self.color])
+                    color = tuple([int(x * self._desired_state.brightness) for x in self.color])
                 else:
                     color = OFF_COLOR.rgb_color
                 self._device.strip[led_id] = color
@@ -69,13 +69,13 @@ class ConstantColor(Mode):
         self.itr = 0
 
     def refresh_led(self):
-        for group, state in zip(self._device.np_groups, self._device_state.groups_state):
+        for group, state in zip(self._device.np_groups, self._desired_state.groups_state):
             if not state:
                 for led_id in group:
                     self._device.strip[led_id] = OFF_COLOR.rgb_color
 
     def _applicate(self, to_color: ()):
-        for group, state in zip(self._device.np_groups, self._device_state.groups_state):
+        for group, state in zip(self._device.np_groups, self._desired_state.groups_state):
             for led_id in group:
                 act = self._device.strip[led_id]
                 color = tuple([self._get_factor(act[i], to_color[i]) for i in range(3)])
@@ -84,8 +84,8 @@ class ConstantColor(Mode):
         self._device.strip.write()
 
     def _get_factor(self, act, dest):
-        n = self._device_state.speed
-        brightness = (self._device_state.brightness * self.itr + (n - self.itr) * self._device_state.old_brightness) // n
+        n = self._desired_state.speed
+        brightness = (self._desired_state.brightness * self.itr + (n - self.itr) * self._desired_state.old_brightness) // n
         color = (self.itr * dest + (n - self.itr) * act) // n
         return color * brightness
 

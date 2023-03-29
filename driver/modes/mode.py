@@ -4,13 +4,11 @@ from enums.mode_state_enum import ModeStateEnum
 
 
 class Mode:
-
     _device: Device
-    _n: int
 
     def __init__(self, device: Device,
-                 device_state: DeviceState):
-        self._device_state = device_state
+                 desired_state: DeviceState):
+        self._desired_state = desired_state
         self._device = device
         self.state = ModeStateEnum.OFF
 
