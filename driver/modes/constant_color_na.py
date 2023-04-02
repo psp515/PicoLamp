@@ -31,10 +31,10 @@ class ConstantColorNA(Mode):
 
     def _write_color(self, to_color):
         current_color = self._calc_color(to_color)
-        for group, state in zip(self._device.np_groups, self._device_state.groups_state):
+        for group, state in zip(self._device.np_groups, self._desired_state.groups_state):
             for led_id in group:
                 self._device.strip[led_id] = current_color if state else OFF_COLOR.rgb_color
         self._device.strip.write()
 
     def _calc_color(self, color):
-        return tuple([int(self._device_state.brightness * x) for x in color])
+        return tuple([int(self._desired_state.brightness * x) for x in color])
