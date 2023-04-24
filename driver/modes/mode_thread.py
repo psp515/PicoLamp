@@ -65,5 +65,5 @@ class ModeThread:
             for led_id in group:
                 self._device.strip[led_id] = (0, 0, 0)
 
-        self._logger.log("Device refreshed.", LoggerEnum.DEBUG)
+        self._logger.log("Device refreshed.", LoggerEnum.INFO)
         self._device.strip.write()

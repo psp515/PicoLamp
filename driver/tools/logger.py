@@ -10,10 +10,10 @@ class Logger:
         self._led = led
 
     def log(self, message: str, information: LoggerEnum):
-        if information != LoggerEnum.DEBUG or (self.debug and information == information.DEBUG):
-            print(message)
+        #if information != LoggerEnum.DEBUG or (self.debug and information == information.DEBUG):
+        print(message)
         # TODO Consider to blink only if debug
-        self._blink(information)
+        # self._blink(1)
 
     def _blink(self, n: int):
         for i in range(n):

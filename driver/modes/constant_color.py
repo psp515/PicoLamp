@@ -4,7 +4,6 @@ from globals import DEFAULT_COLOR, OFF_COLOR
 from models.color import Color
 from modes.mode import Mode
 from enums.mode_state_enum import ModeStateEnum
-import ulab
 
 # TODO: Fix
 class ConstantColor(Mode):

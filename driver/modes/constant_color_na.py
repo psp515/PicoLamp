@@ -14,6 +14,7 @@ class ConstantColorNA(Mode):
     def start(self):
         self._write_color(self.color)
         self.state = ModeStateEnum.ON
+        print("Written")
 
     def update(self, json):
         if json is not None:

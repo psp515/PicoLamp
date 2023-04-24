@@ -34,12 +34,12 @@ class App:
         self.nec_client = nec_client
         self.logger = logger
         self.device = device
-        self.mode_thread = ModeThread(device, device_state)
+        self.mode_thread = ModeThread(device, device_state, logger)
         self.topics = mqtt_topics
 
     def start(self):
         _thread.start_new_thread(self.mode_thread.loop, ())
-
+        self.logger.log("Receiver thread starting.", LoggerEnum.INFO)
         while True:
             if self.wlan.isconnected():
                 for topic in self.topics:

@@ -21,7 +21,7 @@ class HivemqMQTTClient(WatchClient):
             user=self._data["user"],
             password=self._data["password"],
             keepalive=self._data["keepalive"],
-            ssl=self._data["ssl"],
+            ssl=True,
             ssl_params={"server_hostname": str(data["ssl_params_server_hostname"])})
 
         self.client.set_callback(self._callback)

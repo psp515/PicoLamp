@@ -3,8 +3,8 @@
   "server": "0ead7ac6a22e4921976c7b534b4590ea.s2.eu.hivemq.cloud",
   "port": 8883,
   "user": "psp51",
-  "password": "123456789",
-  "keepalive": 60,
+  "password": "...",
+  "keepalive": 20,
   "ssl": 1,
   "ssl_params_server_hostname":"0ead7ac6a22e4921976c7b534b4590ea.s2.eu.hivemq.cloud"
 }

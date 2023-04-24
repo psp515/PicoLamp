@@ -3,6 +3,7 @@ from ujson import loads
 from client.hivemq_client import HivemqMQTTClient
 from client.nec_client import NECClient
 from device_state import DeviceState
+from enums.receiver_enum import ReceiveState
 from enums.device_state_enum import DeviceStateEnum
 from enums.logger_enum import LoggerEnum
 from tools.ir_rx_message import IRReceiveMessage
@@ -38,8 +39,10 @@ def mqtt_state(json: str, device_state: DeviceState, logger: Logger):
     data = loads(json)
 
     if data["state"] == 0 and device_state.state == DeviceStateEnum.ON:
+        print("ending_set")
         device_state.state = DeviceStateEnum.ENDING
     elif data["state"] == 1 and device_state.state == DeviceStateEnum.OFF:
+        print("starting_set")
         device_state.state = DeviceStateEnum.STARTING
 
 
@@ -87,13 +90,15 @@ def mqtt_ping(json: str, device_state: DeviceState, logger: Logger):
 
 
 def ir_on(device_state: DeviceState, logger: Logger, message: IRReceiveMessage):
-    if device_state.state == DeviceStateEnum.OFF:
-        device_state.state = DeviceStateEnum.ON
+    logger.log(f"ON", LoggerEnum.INFO)
+    if device_state.state == DeviceStateEnum.OFF and message.state != ReceiveState.REPEAT:
+        device_state.state = DeviceStateEnum.STARTING
 
 
 def ir_off(device_state: DeviceState, logger: Logger, message: IRReceiveMessage):
-    if device_state.state == DeviceStateEnum.ON:
-        device_state.state = DeviceStateEnum.OFF
+    logger.log(f"OFF", LoggerEnum.INFO)
+    if device_state.state == DeviceStateEnum.ON and message.state != ReceiveState.REPEAT:
+        device_state.state = DeviceStateEnum.ENDING
 
 
 def ir_more_led(device_state: DeviceState, logger: Logger, message: IRReceiveMessage):

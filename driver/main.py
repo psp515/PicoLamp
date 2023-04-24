@@ -33,12 +33,17 @@ if __name__ == '__main__':
 
     try:
         # Others
+        logger.log("Other init start.", LoggerEnum.INFO)
+
         globals.device_colors = read_colors("config/colors.json")
 
         if len(globals.device_colors) < 1:
             raise SetupError("Invalid colors config. Should contain at least 1 color.")
 
+        logger.log("Other init finished.", LoggerEnum.INFO)
+
         # Device
+        logger.log("Device init start.", LoggerEnum.INFO)
 
         strip_conf = read_json("config/strip.json")
         validate_strip_config(strip_conf, used_pins)
@@ -54,7 +59,9 @@ if __name__ == '__main__':
 
         device = Device(neopixel, groups, nec_receiver)
 
+        logger.log("Device init finished.", LoggerEnum.INFO)
         # WIFI
+        logger.log("WIFI init start.", LoggerEnum.INFO)
 
         wlan_config = read_json("config/secrets.json")
         validate_wlan_config(wlan_config)
@@ -63,7 +70,9 @@ if __name__ == '__main__':
         wlan.connect(wlan_config["ssid"], wlan_config["password"])
         wait_for_connection(wlan, logger)
 
+        logger.log("WIFI init finished.", LoggerEnum.INFO)
         # HiveMQ Client
+        logger.log("HiveMQ init start.", LoggerEnum.INFO)
 
         hivemq_config = read_json("config/hivemq.json")
         validate_hivemq_config(hivemq_config)
@@ -71,11 +80,14 @@ if __name__ == '__main__':
         mqtt_client.connect()
         mqtt_topics = configure_mqtt(mqtt_client)
 
+        logger.log("HiveMQ init finished.", LoggerEnum.INFO)
         # NEC Client
+        logger.log("NEC init start.", LoggerEnum.INFO)
 
         nec_client = NECClient(nec_receiver, device_state, logger)
         configure_ir(nec_client, ir_config)
 
+        logger.log("NEC init finished.", LoggerEnum.INFO)
         # Starting app
 
         app = App(device, device_state, logger, mqtt_client, mqtt_topics, nec_client, wlan)
@@ -91,3 +103,4 @@ if __name__ == '__main__':
     finally:
         sleep(3)
         reset()
+ 
