@@ -90,13 +90,13 @@ def mqtt_ping(json: str, device_state: DeviceState, logger: Logger):
 
 
 def ir_on(device_state: DeviceState, logger: Logger, message: IRReceiveMessage):
-    logger.log(f"ON", LoggerEnum.INFO)
+    logger.log(f"IR ON", LoggerEnum.INFO)
     if device_state.state == DeviceStateEnum.OFF and message.state != ReceiveState.REPEAT:
         device_state.state = DeviceStateEnum.STARTING
 
 
 def ir_off(device_state: DeviceState, logger: Logger, message: IRReceiveMessage):
-    logger.log(f"OFF", LoggerEnum.INFO)
+    logger.log(f"IR OFF", LoggerEnum.INFO)
     if device_state.state == DeviceStateEnum.ON and message.state != ReceiveState.REPEAT:
         device_state.state = DeviceStateEnum.ENDING
 
