@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# My
+
+config/
+driver/config/hivemq.json
+driver/config/secrets.json

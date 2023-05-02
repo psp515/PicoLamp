@@ -86,7 +86,10 @@ if __name__ == '__main__':
 
         nec_client = NECClient(nec_receiver, device_state, logger)
         configure_ir(nec_client, ir_config)
-
+        
+        # TODELETE 
+        device_state.ir = nec_receiver
+        
         logger.log("NEC init finished.", LoggerEnum.INFO)
         # Starting app
 

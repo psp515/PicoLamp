@@ -39,10 +39,8 @@ def mqtt_state(json: str, device_state: DeviceState, logger: Logger):
     data = loads(json)
 
     if data["state"] == 0 and device_state.state == DeviceStateEnum.ON:
-        print("ending_set")
         device_state.state = DeviceStateEnum.ENDING
     elif data["state"] == 1 and device_state.state == DeviceStateEnum.OFF:
-        print("starting_set")
         device_state.state = DeviceStateEnum.STARTING
 
 
@@ -53,7 +51,10 @@ def mqtt_update_mode(json: str, device_state: DeviceState, logger: Logger):
         return
 
     device_state.old_brightness = device_state.brightness
-    device_state.brightness = data["brightness"]
+    
+    if "brightness" in data:
+        device_state.brightness_prev = device_state.brightness
+        device_state.brightness = data["brightness"]
 
     if "extend" in data:
         device_state.json = data["extend"]
@@ -80,23 +81,33 @@ def mqtt_new_mode(json: str, device_state: DeviceState, logger: Logger):
         return
 
     device_state.mode = data["mode"]
-    device_state.json = data["mode_data"]
+    data = data["data"]
+     
+    if "brightness" in data:
+        device_state.brightness_prev = device_state.brightness
+        device_state.brightness = data["brightness"]
+        print(device_state.brightness_prev, device_state.brightness)
+
+    if "extend" in data:
+        device_state.json = data["extend"]
 
     device_state.state = DeviceStateEnum.NEW
 
 
 def mqtt_ping(json: str, device_state: DeviceState, logger: Logger):
     logger.log(f"Ping.\n{json}", LoggerEnum.INFO)
-
+    #logger.log(len(device_state.ir._pulses), LoggerEnum.INFO)
+    #logger.log(device_state.ir._state, LoggerEnum.INFO)
+    #logger.log(device_state.ir._timer, LoggerEnum.INFO)
 
 def ir_on(device_state: DeviceState, logger: Logger, message: IRReceiveMessage):
-    logger.log(f"IR ON", LoggerEnum.INFO)
+    logger.log(f"ON", LoggerEnum.INFO)
     if device_state.state == DeviceStateEnum.OFF and message.state != ReceiveState.REPEAT:
         device_state.state = DeviceStateEnum.STARTING
 
 
 def ir_off(device_state: DeviceState, logger: Logger, message: IRReceiveMessage):
-    logger.log(f"IR OFF", LoggerEnum.INFO)
+    logger.log(f"OFF", LoggerEnum.INFO)
     if device_state.state == DeviceStateEnum.ON and message.state != ReceiveState.REPEAT:
         device_state.state = DeviceStateEnum.ENDING
 

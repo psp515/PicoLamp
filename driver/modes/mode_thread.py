@@ -20,6 +20,7 @@ class ModeThread:
         self._logger = logger
         self._states = states
         self._mode = ConstantColorNA(device, states)
+        self._mode_num = 0
 
     def loop(self):
         self._restart_strip()
@@ -50,15 +51,26 @@ class ModeThread:
             self._mode.loop()
 
     def _change_mode(self):
-        # TODO: change mode
-        state = self._states.mode
-        if state == -1:
+        mode = self._states.mode
+        
+        if mode == self._mode_num:
+            return
+        
+        if mode == -1 or mode == 0:
             if self._states.json is not None:
                 self._mode = ConstantColorNA(self._device, self._states, self._states.json["color"])
             else:
                 self._mode = ConstantColorNA(self._device, self._states)
-        elif state == 0:
-            pass
+            self._mode_num = 0
+        elif mode == 1:
+            print("here")
+            if self._states.json is not None:
+                self._mode = ConstantColor(self._device, self._states, self._states.json["color"])
+            else:
+                self._mode = ConstantColor(self._device, self._states)
+            self._mode_num = 1
+                
+        self._mode.state = ModeStateEnum.STARTING
         
     def _restart_strip(self):
         for group in self._device.np_groups:

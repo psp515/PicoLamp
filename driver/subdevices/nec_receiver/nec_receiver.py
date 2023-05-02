@@ -37,15 +37,22 @@ class NECReceiver:
         self._last_address = -1
 
     def _trigger_callback(self, pin):
-        pulse = ticks_us()
+        try:
+            pulse = ticks_us()
 
-        if self._state is SubdeviceState.BUSY:
-            self._pulses.append(pulse)
-            return
-
-        self._state = SubdeviceState.BUSY
-        self._timer.init(mode=Timer.ONE_SHOT, period=TRIGGER_TIME_MS, callback=self._parse_data)
-        self._pulses = [pulse]
+            if self._state is SubdeviceState.BUSY:
+                self._pulses.append(pulse)
+                if len(self._pulses) > 2 * PULSES:
+                    print("Clear")
+                    self._parse_data(None)
+                return
+        
+            self._state = SubdeviceState.BUSY
+            self._timer.init(mode=Timer.ONE_SHOT, period=TRIGGER_TIME_MS, callback=self._parse_data)
+            self._pulses = [pulse]
+        except Exception as e:
+            print("Error", e)
+            
 
     @property
     def callback(self):
@@ -62,7 +69,10 @@ class NECReceiver:
         try:
             if pulses_count > PULSES:
                 raise RuntimeError(ReceiveState.OVERRUN)
-
+            
+            if pulses_count < 3:
+                raise RuntimeError(ReceiveState.BAD_START)
+            
             start_one_width = ticks_diff(self._pulses[1], self._pulses[0])
 
             if start_one_width < START_MIN_ONE_BIT_US:
@@ -107,6 +117,7 @@ class NECReceiver:
             message = IRReceiveMessage(e.args[0])
 
         self._state = SubdeviceState.ON
+        self._pulses = []
         self.callback(message)
 
     def _get_byte(self, start: int, stop: int, array: []):

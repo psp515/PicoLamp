@@ -7,9 +7,9 @@ from modes.mode import Mode
 
 
 class ConstantColorNA(Mode):
-    def __init__(self, device: Device, device_state: DeviceState, color: Color = DEFAULT_COLOR):
+    def __init__(self, device: Device, device_state: DeviceState, color = DEFAULT_COLOR.rgb_color):
         super().__init__(device, device_state)
-        self.color = color.rgb_color
+        self.color = color
 
     def start(self):
         self._write_color(self.color)
