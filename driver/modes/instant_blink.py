@@ -2,7 +2,7 @@ import globals
 from device import Device
 from device_state import DeviceState
 from enums.mode_state_enum import ModeStateEnum
-from globals import OFF_COLOR
+from globals import OFF_COLOR, MINIMUM_BLINK_SPAN
 from modes.mode import Mode
 from time import ticks_ms, ticks_diff, ticks_add
 
@@ -11,9 +11,9 @@ class InstantBlink(Mode):
     def __init__(self, device: Device, device_state: DeviceState, colors=globals.device_colors, speed=None):
         super().__init__(device, device_state)
         self.colors = [tuple(x) for x in colors]
-        self.speed = 2 * device_state.speed if speed is not None else speed
+        self.speed = MINIMUM_BLINK_SPAN if speed is None else max(speed, MINIMUM_BLINK_SPAN)
         self.color = tuple(colors[0])
-        self._next = None
+        self._next = ticks_add(ticks_ms(), self.speed)
 
     def loop(self):
         if self.state == ModeStateEnum.OFF:
@@ -27,6 +27,7 @@ class InstantBlink(Mode):
                 i = (i+1) % len(self.colors)
             self.color = self.colors[i]
             self._write_color(self.color)
+            self._next = ticks_add(ticks_ms(), self.speed)
 
     def start(self):
         self._write_color(OFF_COLOR.rgb_color)
@@ -36,7 +37,7 @@ class InstantBlink(Mode):
     def update(self, json):
         if json is not None:
             if "speed" in json:
-                self.speed = json["speed"]
+                self.speed = max(json["speed"], MINIMUM_BLINK_SPAN)
             if "colors" in json:
                 tmp_colors = json["colors"]
                 if len(tmp_colors) > 0:
