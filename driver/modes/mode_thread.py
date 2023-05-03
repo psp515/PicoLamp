@@ -6,6 +6,7 @@ from modes.constant_color import ConstantColor
 from modes.blink import Blink
 from modes.instant_blink import InstantBlink
 from modes.constant_color_na import ConstantColorNA
+from modes.loading import Loading
 from modes.mode import Mode
 from enums.mode_state_enum import ModeStateEnum
 from tools.logger import Logger
@@ -84,6 +85,12 @@ class ModeThread:
             else:
                 self._mode = InstantBlink(self._device, self._states)
             self._mode_num = 3
+        elif mode == 4:
+            if self._states.json is not None and "speed" in json and "colors" in json and len(json["colors"]) > 0:
+                self._mode = Loading(self._device, self._states, self._states.json["colors"], self._states.json["speed"])
+            else:
+                self._mode = Loading(self._device, self._states)
+            self._mode_num = 4
                 
         self._mode.state = ModeStateEnum.STARTING
         
