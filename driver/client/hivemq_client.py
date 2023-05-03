@@ -30,16 +30,21 @@ class HivemqMQTTClient(WatchClient):
         self.client.connect()
 
     def _callback(self, topic, data):
-        topic = topic.decode("utf-8")
-        data = data.decode("utf-8")
+        try:
+            topic = topic.decode("utf-8")
+            data = data.decode("utf-8")
 
-        if topic not in self._topics:
-            self._logger.log(f"{topic} not found in topics.", LoggerEnum.WARNING)
-            return
+            if topic not in self._topics:
+                self._logger.log(f"{topic} not found in topics.", LoggerEnum.WARNING)
+                return
 
-        self._logger.log(f"Data from topic '{topic}' received.", LoggerEnum.INFO)
-        self._logger.log(data, LoggerEnum.DEBUG)
-        self._topics[topic](data, self._device_state, self._logger)
+            self._topics[topic](data, self._device_state, self._logger)
+        except Exception as e:
+            self._logger.log(f"Error reciving data from {topic}", LoggerEnum.ERROR)
+            self._logger.log(e, LoggerEnum.ERROR)
+        finally:
+            self._logger.log(f"Data from topic '{topic}' received.", LoggerEnum.INFO)
+            self._logger.log(data, LoggerEnum.DEBUG)
 
     def publish(self, topic, message):
         self.client.publish(topic, message)

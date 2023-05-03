@@ -1,17 +1,19 @@
 from device import Device
 from device_state import DeviceState
+from models.color import Color
 from modes.animated_mode import AnimatedMode
-from modes.constant_color_na import ConstantColorNA
 from enums.mode_state_enum import ModeStateEnum
 from globals import DEFAULT_COLOR, OFF_COLOR
 
 
-class ConstantColor(AnimatedMode, ConstantColorNA):
+class LoadingAnimation(AnimatedMode):
     color: ()
-    
+
     def __init__(self, device: Device, desired_state: DeviceState, starting_color: () = DEFAULT_COLOR.rgb_color):
         super().__init__(device, desired_state)
         self.brightness = desired_state.brightness
+        self._dir = 0
+        self._fill = 0
         self._itr = 0
         self._max = desired_state.speed
         self._strip_colors = [device.strip[i] for i in range(len(device.strip))]
@@ -33,6 +35,7 @@ class ConstantColor(AnimatedMode, ConstantColorNA):
 
     def _default(self):
         self._itr = 0
+        self._fill = 0
         self._max = self._desired_state.speed
         self._strip_colors = [self._device.strip[i] for i in range(len(self._device.strip))]
 
@@ -53,16 +56,17 @@ class ConstantColor(AnimatedMode, ConstantColorNA):
         self._animate(OFF_COLOR.rgb_color)
         if self._itr == self._max:
             self.state = ModeStateEnum.OFF
-    
+
     def refresh_led(self):
         self.state = ModeStateEnum.UPDATING
-        self._write_color(self.color) # from ConstantColorNA
+        self._write_color(self.color)  # from ConstantColorNA
+        self._default()
         self.state = ModeStateEnum.ON
-        
+
     def _animate(self, to_color: ()):
         n = self._desired_state.speed
         rising, downing = self._itr / n, (n - self._itr) / n
-        
+
         if self._desired_state.brightness_prev == self._desired_state.brightness:
             bright = self._desired_state.brightness
         else:
@@ -73,6 +77,8 @@ class ConstantColor(AnimatedMode, ConstantColorNA):
                 for led in group:
                     led_prev = self._strip_colors[led]
                     color = tuple([int(downing * led_prev[i] + rising * to_color[i] * bright) for i in range(3)])
-                    self._device.strip[led] = color 
+                    self._device.strip[led] = color
 
         self._device.strip.write()
+
+

@@ -3,6 +3,8 @@ from device_state import DeviceState
 from enums.device_state_enum import DeviceStateEnum
 from enums.logger_enum import LoggerEnum
 from modes.constant_color import ConstantColor
+from modes.blink import Blink
+from modes.instant_blink import InstantBlink
 from modes.constant_color_na import ConstantColorNA
 from modes.mode import Mode
 from enums.mode_state_enum import ModeStateEnum
@@ -55,20 +57,33 @@ class ModeThread:
         
         if mode == self._mode_num:
             return
-        
+
+        json = self._states.json
+
         if mode == -1 or mode == 0:
-            if self._states.json is not None:
+            if self._states.json is not None and "color" in json:
                 self._mode = ConstantColorNA(self._device, self._states, self._states.json["color"])
             else:
                 self._mode = ConstantColorNA(self._device, self._states)
             self._mode_num = 0
         elif mode == 1:
-            print("here")
-            if self._states.json is not None:
+            if self._states.json is not None and "color" in json:
                 self._mode = ConstantColor(self._device, self._states, self._states.json["color"])
             else:
                 self._mode = ConstantColor(self._device, self._states)
             self._mode_num = 1
+        elif mode == 2:
+            if self._states.json is not None and "speed" in json and "colors" in json and len(json["colors"]) > 0:
+                self._mode = Blink(self._device, self._states, self._states.json["colors"], self._states.json["speed"])
+            else:
+                self._mode = Blink(self._device, self._states)
+            self._mode_num = 2
+        elif mode == 3:
+            if self._states.json is not None and "speed" in json and "colors" in json and len(json["colors"]) > 0:
+                self._mode = InstantBlink(self._device, self._states, self._states.json["colors"], self._states.json["speed"])
+            else:
+                self._mode = InstantBlink(self._device, self._states)
+            self._mode_num = 3
                 
         self._mode.state = ModeStateEnum.STARTING
         
