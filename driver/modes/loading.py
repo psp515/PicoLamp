@@ -60,11 +60,10 @@ class Loading(AnimatedMode):
         self._itr += 1
         if self._is_shining:
             for group, state in zip(self._device.np_groups, self.groups_state):
-                if state:
-                    first = group[0]
-                    actual = int(first + self._itr * len(group) / self._max)
-                    actual = min(actual, len(self._device.strip) - 1)
-                    self._device.strip[actual] = OFF_COLOR.rgb_color
+                first = group[0]
+                actual = int(first + self._itr * len(group) / self._max)
+                actual = min(actual, len(self._device.strip) - 1)
+                self._device.strip[actual] = OFF_COLOR.rgb_color
         else:
             for group, state in zip(self._device.np_groups, self.groups_state):
                 if state:
@@ -113,5 +112,8 @@ class Loading(AnimatedMode):
                     led_prev = self._strip_colors[led]
                     color = tuple([int(downing * led_prev[i] + rising * to_color[i] * bright) for i in range(3)])
                     self._device.strip[led] = color
+            else:
+                for led in group:
+                    self._device.strip[led] = OFF_COLOR.rgb_color
 
         self._device.strip.write()

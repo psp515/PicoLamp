@@ -6,6 +6,7 @@ from modes.constant_color import ConstantColor
 from modes.blink import Blink
 from modes.instant_blink import InstantBlink
 from modes.constant_color_na import ConstantColorNA
+from modes.rgb_animation import RGB
 from modes.loading import Loading
 from modes.mode import Mode
 from enums.mode_state_enum import ModeStateEnum
@@ -91,6 +92,12 @@ class ModeThread:
             else:
                 self._mode = Loading(self._device, self._states)
             self._mode_num = 4
+        elif mode == 5:
+            if self._states.json is not None and "wait" in json:
+                self._mode = RGB(self._device, self._states, self._states.json["wait"])
+            else:
+                self._mode = RGB(self._device, self._states)
+            self._mode_num = 5
                 
         self._mode.state = ModeStateEnum.STARTING
         
