@@ -6,6 +6,7 @@ from modes.constant_color import ConstantColor
 from modes.blink import Blink
 from modes.instant_blink import InstantBlink
 from modes.constant_color_na import ConstantColorNA
+from modes.spinning import Spinning
 from modes.rgb_animation import RGB
 from modes.loading import Loading
 from modes.mode import Mode
@@ -98,6 +99,12 @@ class ModeThread:
             else:
                 self._mode = RGB(self._device, self._states)
             self._mode_num = 5
+        elif mode == 6:
+            if self._states.json is not None and "colors" in json and len(json["colors"]) > 0:
+                self._mode = Spinning(self._device, self._states, self._states.json["colors"])
+            else:
+                self._mode = Spinning(self._device, self._states)
+            self._mode_num = 6
                 
         self._mode.state = ModeStateEnum.STARTING
         
