@@ -34,7 +34,7 @@ class App:
         self.nec_client = nec_client
         self.logger = logger
         self.device = device
-        self.mode_thread = ModeThread(device, device_state, logger)
+        self.mode_thread = ModeThread(device, device_state, wlan, logger)
         self.topics = mqtt_topics
 
     def start(self):

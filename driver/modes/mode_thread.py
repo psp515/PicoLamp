@@ -6,24 +6,27 @@ from modes.constant_color import ConstantColor
 from modes.blink import Blink
 from modes.instant_blink import InstantBlink
 from modes.constant_color_na import ConstantColorNA
+from modes.torch import Torch
+from modes.wifi_quality import WifiQuality
+from modes.fade import Fade
 from modes.spinning import Spinning
 from modes.rgb_animation import RGB
 from modes.loading import Loading
-from modes.mode import Mode
 from enums.mode_state_enum import ModeStateEnum
 from tools.logger import Logger
+from network import WLAN
 
 
 class ModeThread:
-    _mode: Mode
-
     def __init__(self,
                  device: Device,
                  states: DeviceState,
+                 wlan: WLAN,
                  logger: Logger):
         self._device = device
         self._logger = logger
         self._states = states
+        self._wlan = wlan
         self._mode = ConstantColorNA(device, states)
         self._mode_num = 0
 
@@ -57,9 +60,12 @@ class ModeThread:
 
     def _change_mode(self):
         mode = self._states.mode
-        
+
         if mode == self._mode_num:
             return
+
+        if mode > 9 or mode < 0:
+            mode = -1
 
         json = self._states.json
 
@@ -83,13 +89,15 @@ class ModeThread:
             self._mode_num = 2
         elif mode == 3:
             if self._states.json is not None and "speed" in json and "colors" in json and len(json["colors"]) > 0:
-                self._mode = InstantBlink(self._device, self._states, self._states.json["colors"], self._states.json["speed"])
+                self._mode = InstantBlink(self._device, self._states, self._states.json["colors"],
+                                          self._states.json["speed"])
             else:
                 self._mode = InstantBlink(self._device, self._states)
             self._mode_num = 3
         elif mode == 4:
             if self._states.json is not None and "speed" in json and "colors" in json and len(json["colors"]) > 0:
-                self._mode = Loading(self._device, self._states, self._states.json["colors"], self._states.json["speed"])
+                self._mode = Loading(self._device, self._states, self._states.json["colors"],
+                                     self._states.json["speed"])
             else:
                 self._mode = Loading(self._device, self._states)
             self._mode_num = 4
@@ -105,9 +113,21 @@ class ModeThread:
             else:
                 self._mode = Spinning(self._device, self._states)
             self._mode_num = 6
-                
+        elif mode == 7:
+            if self._states.json is not None and "colors" in json and len(json["colors"]) > 2:
+                self._mode = Fade(self._device, self._states, self._states.json["colors"])
+            else:
+                self._mode = Fade(self._device, self._states)
+            self._mode_num = 7
+        elif mode == 8:
+            self._mode = WifiQuality(self._device, self._states, self._wlan)
+            self._mode_num = 8
+        elif mode == 9:
+            self._mode = Torch(self._device, self._states)
+            self._mode_num = 9
+
         self._mode.state = ModeStateEnum.STARTING
-        
+
     def _restart_strip(self):
         for group in self._device.np_groups:
             for led_id in group:
