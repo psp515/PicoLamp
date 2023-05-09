@@ -60,7 +60,6 @@ class Torch(AnimatedMode):
 
     def _generate_color(self):
         r, g, b = TORCH_MAX
-
         value = random.randint(0, 100)
 
         r = r - value
@@ -85,5 +84,8 @@ class Torch(AnimatedMode):
                     led_next = self._colors[led]
                     color = tuple([int(downing * led_prev[i] + rising * led_next * bright) for i in range(3)])
                     self._device.strip[led] = color
+            else:
+                for led in group:
+                    self._device.strip[led] = OFF_COLOR.rgb_color
 
         self._device.strip.write()

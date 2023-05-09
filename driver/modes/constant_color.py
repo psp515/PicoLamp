@@ -56,7 +56,8 @@ class ConstantColor(AnimatedMode, ConstantColorNA):
     
     def refresh_led(self):
         self.state = ModeStateEnum.UPDATING
-        self._write_color(self.color) # from ConstantColorNA
+        if self._itr == self._max:
+            self._write_color(self.color)
         self.state = ModeStateEnum.ON
         
     def _animate(self, to_color: ()):
@@ -73,6 +74,9 @@ class ConstantColor(AnimatedMode, ConstantColorNA):
                 for led in group:
                     led_prev = self._strip_colors[led]
                     color = tuple([int(downing * led_prev[i] + rising * to_color[i] * bright) for i in range(3)])
-                    self._device.strip[led] = color 
+                    self._device.strip[led] = color
+            else:
+                for led in group:
+                    self._device.strip[led] = OFF_COLOR.rgb_color
 
         self._device.strip.write()

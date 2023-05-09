@@ -104,6 +104,7 @@ if __name__ == '__main__':
     except Exception as e:
         logger.log(str(e), LoggerEnum.ERROR)
     finally:
-        sleep(3)
-        reset()
+        if not DEBUG:
+            sleep(3)
+            reset()
  

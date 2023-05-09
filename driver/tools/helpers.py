@@ -3,6 +3,7 @@ from enums.logger_enum import LoggerEnum
 from exception.setup_error import SetupError
 import network
 
+from exception.setup_error import SetupError
 
 def generate_groups(sizes: [], total_length: int):
     groups = []
@@ -69,3 +70,5 @@ def wait_for_connection(wifi: network.WLAN, logger: Logger):
 
     if not wifi.isconnected():
         logger.log(f"Not Connected. Status: {wifi.status()}. ", LoggerEnum.WARNING)
+        raise SetupError("Not connected to the internet.")
+
