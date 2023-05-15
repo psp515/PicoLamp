@@ -4,21 +4,27 @@ from modes.animated_mode import AnimatedMode
 from enums.mode_state_enum import ModeStateEnum
 from globals import OFF_COLOR, UNRESOLVED_CONNECTION, EXCELLENT_CONNECTION, GOOD_CONNECTION, POOR_CONNECTION, \
     BAD_CONNECTION, UNRESOLVED_CONNECTION
-from network import WLAN
+import network
+
+from tools.config_readers import read_json
 
 
 class WifiQuality(AnimatedMode):
     color: ()
 
-    def __init__(self, device: Device, desired_state: DeviceState, wlan: WLAN):
+    def __init__(self, device: Device, desired_state: DeviceState):
         super().__init__(device, desired_state)
         self.brightness = desired_state.brightness
         self._itr = 0
         self._max = desired_state.speed
-        self._wlan = wlan
         self._strip_colors = [device.strip[i] for i in range(len(device.strip))]
         self.prev_color = None
         self.color = UNRESOLVED_CONNECTION
+
+        self._wlan = network.WLAN(network.STA_IF)
+        self._wlan.active(True)
+        wlan_config = read_json("config/secrets.json")
+        self._wlan_name = wlan_config["ssid"]
 
     def end(self):
         self.state = ModeStateEnum.ENDING
@@ -104,15 +110,21 @@ class WifiQuality(AnimatedMode):
 
     def _check_connection(self):
         try:
-            rssi = self._wlan.status('rssi')
-
-            if rssi >= -50:
-                return EXCELLENT_CONNECTION
-            elif rssi >= -60:
-                return GOOD_CONNECTION
-            elif rssi >= -70:
-                return POOR_CONNECTION
-
-            return BAD_CONNECTION
-        except Exception:
+            ap_list = self._wlan.scan()
+            connected_network = None
+            for ap in ap_list:
+                if ap[0].decode() == self._wlan_name:
+                    print(connected_network[3])
+                    if connected_network[3] >= -50:
+                        return EXCELLENT_CONNECTION
+                    elif connected_network[3] >= -60:
+                        return GOOD_CONNECTION
+                    elif connected_network[3] >= -70:
+                        return POOR_CONNECTION
+                    else:
+                        return BAD_CONNECTION
+            print("Not found")
+            return UNRESOLVED_CONNECTION
+        except Exception as e:
+            print("Error", e)
             return UNRESOLVED_CONNECTION

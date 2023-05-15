@@ -1,17 +1,17 @@
 import _thread
 
 from network import WLAN
-from utime import sleep
+from utime import sleep, ticks_ms, ticks_diff
+from machine import Timer
 
 from client.hivemq_client import HivemqMQTTClient
 from client.nec_client import NECClient
 from device import Device
-from device_management import mqtt_state, mqtt_new_mode, mqtt_ping
 from device_state import DeviceState
 from modes.mode_thread import ModeThread
 from tools.logger import Logger
 from enums.logger_enum import LoggerEnum
-
+from enums.subdevice_state import SubdeviceState
 
 class App:
     device: Device
@@ -40,7 +40,9 @@ class App:
     def start(self):
         _thread.start_new_thread(self.mode_thread.loop, ())
         self.logger.log("Receiver thread starting.", LoggerEnum.INFO)
+
         while True:
+
             if self.wlan.isconnected():
                 for topic in self.topics:
                     self.client.subscribe(topic)

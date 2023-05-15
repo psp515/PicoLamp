@@ -3,7 +3,6 @@ from enums.logger_enum import LoggerEnum
 from exception.setup_error import SetupError
 import network
 
-from exception.setup_error import SetupError
 
 def generate_groups(sizes: [], total_length: int):
     groups = []
@@ -63,12 +62,10 @@ def validate_hivemq_config(config: {}):
 def wait_for_connection(wifi: network.WLAN, logger: Logger):
     sleep(1)
     i = 0
-    while not wifi.isconnected() and i < 10:
+    while not wifi.isconnected() and i < 30:
         logger.log(f"Not Connected. Status: {wifi.status()}. Awaiting.", LoggerEnum.WARNING)
         i += 1
         sleep(1)
 
     if not wifi.isconnected():
         logger.log(f"Not Connected. Status: {wifi.status()}. ", LoggerEnum.WARNING)
-        raise SetupError("Not connected to the internet.")
-

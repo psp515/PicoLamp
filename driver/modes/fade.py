@@ -41,10 +41,12 @@ class Fade(AnimatedMode):
         self._animate(self.color)
 
         if self._itr == self._max:
-            self._itr = 0
+            self._itr = 0 
             self._i += 1
-            self._i = self._i % len(self.colors)
+            if self._i == len(self.colors):
+                self._i = 0
             self.color = self.colors[self._i]
+            
             self._strip_colors = [self._device.strip[i] for i in range(len(self._device.strip))]
 
     def update(self, json):
@@ -55,13 +57,25 @@ class Fade(AnimatedMode):
                 if len(tmp_colors) > 2:
                     self.colors = [tuple(x) for x in tmp_colors]
 
-        self._default()
+        self._itr = 0
+        self._i = 0
+        self.color = self.colors[self._i]
+        self._max = self._desired_state.speed
+        self._strip_colors = [self._device.strip[i] for i in range(len(self._device.strip))]
 
     def update_step(self):
         self._itr += 1
         self._animate(self.color)
+
         if self._itr == self._max:
             self.state = ModeStateEnum.ON
+            self._itr = 0
+            self._i += 1
+            if self._i == len(self.colors):
+                self._i = 0
+            self.color = self.colors[self._i]
+
+            self._strip_colors = [self._device.strip[i] for i in range(len(self._device.strip))]
 
     def _default(self):
         self._itr = 0
@@ -70,6 +84,7 @@ class Fade(AnimatedMode):
 
     def _default_end_step(self):
         self.state = ModeStateEnum.ON
+        self._itr = 0
         self._i += 1
         self._i = self._i % len(self.colors)
         self.color = self.colors[self._i]

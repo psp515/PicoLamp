@@ -29,10 +29,10 @@ class NECReceiver:
     def __init__(self, pin: int):
         self._initialized_pin = Pin(pin, Pin.IN)
         self._initialized_pin.irq(trigger=(Pin.IRQ_FALLING | Pin.IRQ_RISING), handler=self._trigger_callback)
-        self._pulses = []
-        self._timer = Timer(-1)
+        self.pulses = []
+        self.timer = Timer(-1)
         self._callback = None
-        self._state = SubdeviceState.ON
+        self.state = SubdeviceState.ON
         self._last_command = -1
         self._last_address = -1
 
@@ -40,19 +40,18 @@ class NECReceiver:
         try:
             pulse = ticks_us()
 
-            if self._state is SubdeviceState.BUSY:
-                self._pulses.append(pulse)
-                if len(self._pulses) > 2 * PULSES:
+            if self.state is SubdeviceState.BUSY:
+                self.pulses.append(pulse)
+                if len(self.pulses) > 2 * PULSES:
                     print("Clear")
                     self._parse_data(None)
                 return
         
-            self._state = SubdeviceState.BUSY
-            self._timer.init(mode=Timer.ONE_SHOT, period=TRIGGER_TIME_MS, callback=self._parse_data)
-            self._pulses = [pulse]
+            self.state = SubdeviceState.BUSY
+            self.timer.init(mode=Timer.ONE_SHOT, period=TRIGGER_TIME_MS, callback=self._parse_data)
+            self.pulses = [pulse]
         except Exception as e:
             print("Error", e)
-            
 
     @property
     def callback(self):
@@ -65,7 +64,7 @@ class NECReceiver:
     def _parse_data(self, timer):
 
         message = None
-        pulses_count = len(self._pulses)
+        pulses_count = len(self.pulses)
         try:
             if pulses_count > PULSES:
                 raise RuntimeError(ReceiveState.OVERRUN)
@@ -73,12 +72,12 @@ class NECReceiver:
             if pulses_count < 3:
                 raise RuntimeError(ReceiveState.BAD_START)
             
-            start_one_width = ticks_diff(self._pulses[1], self._pulses[0])
+            start_one_width = ticks_diff(self.pulses[1], self.pulses[0])
 
             if start_one_width < START_MIN_ONE_BIT_US:
                 raise RuntimeError(ReceiveState.BAD_START)
 
-            start_zero_width = ticks_diff(self._pulses[2], self._pulses[1])
+            start_zero_width = ticks_diff(self.pulses[2], self.pulses[1])
 
             if start_zero_width < START_MAX_REPEAT_ZERO_BIT_US:
 
@@ -98,10 +97,10 @@ class NECReceiver:
                 elif start_zero_width > START_MAX_REPEAT_ZERO_BIT_US and pulses_count < PULSES:
                     raise RuntimeError(ReceiveState.BAD_BLOCK)
 
-                address = self._get_byte(3, 19, self._pulses)
-                address_complement = self._get_byte(19, 35, self._pulses)
-                command = self._get_byte(35, 51, self._pulses)
-                command_complement = self._get_byte(51, 66, self._pulses)
+                address = self._get_byte(3, 19, self.pulses)
+                address_complement = self._get_byte(19, 35, self.pulses)
+                command = self._get_byte(35, 51, self.pulses)
+                command_complement = self._get_byte(51, 66, self.pulses)
 
                 if address & address_complement != 0:
                     raise RuntimeError(ReceiveState.BAD_ADDRESS)
@@ -116,8 +115,8 @@ class NECReceiver:
         except RuntimeError as e:
             message = IRReceiveMessage(e.args[0])
 
-        self._state = SubdeviceState.ON
-        self._pulses = []
+        self.state = SubdeviceState.ON
+        self.pulses = []
         self.callback(message)
 
     def _get_byte(self, start: int, stop: int, array: []):

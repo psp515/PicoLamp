@@ -2,18 +2,17 @@ from device import Device
 from device_state import DeviceState
 from modes.animated_mode import AnimatedMode
 from enums.mode_state_enum import ModeStateEnum
-from globals import LOADING_SPAN, OFF_COLOR, device_colors
+from globals import LOADING_SPAN, OFF_COLOR, device_colors, DEFAULT_FADE
 from time import ticks_ms, ticks_diff, ticks_add
 
 
 class Loading(AnimatedMode):
-    color: ()
-
-    def __init__(self, device: Device, desired_state: DeviceState, colors=device_colors, speed=None):
+    
+    def __init__(self, device: Device, desired_state: DeviceState, colors=DEFAULT_FADE, speed=None):
         super().__init__(device, desired_state)
         self.colors = [tuple(x) for x in colors]
         self.speed = LOADING_SPAN if speed is None else max(speed, LOADING_SPAN)
-        self.color = tuple(colors[0])
+        self.color = tuple(self.colors[0])
         self._itr = 0
         self._max = self._desired_state.speed
         self._is_shining = True

@@ -56,7 +56,7 @@ class Spinning(AnimatedMode):
             actual = int((self._itr * len(group)) / self._max)
             for i in range(len(group)):
                 idx = (actual + i) % len(group)
-                if i < len(self.colors):
+                if i < len(self.colors) and state:
                     self._device.strip[group[0] + idx] = self._calc_color(self.colors[i])
                 else:
                     self._device.strip[group[0] + idx] = OFF_COLOR.rgb_color
