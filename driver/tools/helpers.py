@@ -69,3 +69,5 @@ def wait_for_connection(wifi: network.WLAN, logger: Logger):
 
     if not wifi.isconnected():
         logger.log(f"Not Connected. Status: {wifi.status()}. ", LoggerEnum.WARNING)
+    
+    logger.log(f"Connected. Status: {wifi.status()}. ", LoggerEnum.WARNING)

@@ -128,3 +128,4 @@ class WifiQuality(AnimatedMode):
         except Exception as e:
             print("Error", e)
             return UNRESOLVED_CONNECTION
+        
