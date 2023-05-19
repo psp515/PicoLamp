@@ -8,11 +8,13 @@ from time import ticks_ms, ticks_diff, ticks_add
 
 
 class Blink(Mode):
-    def __init__(self, device: Device, device_state: DeviceState, colors=globals.device_colors, speed=None):
+    def __init__(self, device: Device, device_state: DeviceState, colors=None, speed=None):
         super().__init__(device, device_state)
+        if colors == None:
+            colors = globals.device_colors
         self.colors = [tuple(x) for x in colors]
         self.speed = MINIMUM_BLINK_SPAN if speed is None else max(speed, MINIMUM_BLINK_SPAN)
-        self.color = tuple(colors[0])
+        self.color = self.colors[0]
         self._next = ticks_add(ticks_ms(), self.speed)
         self._is_shining = False
 

@@ -66,15 +66,15 @@ class Fade(AnimatedMode):
     def update_step(self):
         self._itr += 1
         self._animate(self.color)
-
+        
         if self._itr == self._max:
             self.state = ModeStateEnum.ON
-            self._itr = 0
+            self._itr = 0 
             self._i += 1
             if self._i == len(self.colors):
                 self._i = 0
             self.color = self.colors[self._i]
-
+            
             self._strip_colors = [self._device.strip[i] for i in range(len(self._device.strip))]
 
     def _default(self):

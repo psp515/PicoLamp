@@ -1,6 +1,7 @@
 from utime import sleep
 from enums.logger_enum import LoggerEnum
 from exception.setup_error import SetupError
+from tools.logger import Logger
 import network
 
 
@@ -58,16 +59,37 @@ def validate_hivemq_config(config: {}):
         if config[name] is None:
             raise SetupError(f"Invalid hivemq config. (lack of {name})")
 
+def _get_status_description(status):
+    if status == network.STAT_IDLE:
+        return "No connection and no activity"
+    elif status == network.STAT_CONNECTING:
+        return "Connecting in progress"
+    elif status == network.STAT_WRONG_PASSWORD:
+        return "Failed due to incorrect password"
+    elif status == network.STAT_NO_AP_FOUND:
+        return "Failed because no access point replied"
+    elif status == network.STAT_CONNECT_FAIL:
+        return "Failed due to other problems"
+    elif status == network.STAT_GOT_IP:
+        return "Connection successful"
+    
+    return "Unknown"
 
 def wait_for_connection(wifi: network.WLAN, logger: Logger):
     sleep(1)
     i = 0
     while not wifi.isconnected() and i < 30:
-        logger.log(f"Not Connected. Status: {wifi.status()}. Awaiting.", LoggerEnum.WARNING)
+        status = wifi.status()
+        logger.log(f"Not Connected. Status: {status}, means {_get_status_description(status)}", LoggerEnum.WARNING)
         i += 1
         sleep(1)
 
     if not wifi.isconnected():
-        logger.log(f"Not Connected. Status: {wifi.status()}. ", LoggerEnum.WARNING)
-    
-    logger.log(f"Connected. Status: {wifi.status()}. ", LoggerEnum.WARNING)
+        status = wifi.status()
+        logger.log(f"Not Connected. Status: {status}, means {_get_status_description(status)}. ", LoggerEnum.WARNING)
+        raise SetupError(f"Not connected to internet. Status: {status}, means {_get_status_description(status)}")
+    else:
+        status = wifi.status()
+        logger.log(f"Connected. Status: {status}, means {_get_status_description(status)}. ", LoggerEnum.INFO)
+
+

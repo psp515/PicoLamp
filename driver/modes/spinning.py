@@ -2,13 +2,13 @@ from device import Device
 from device_state import DeviceState
 from modes.animated_mode import AnimatedMode
 from enums.mode_state_enum import ModeStateEnum
-from globals import LOADING_SPAN, OFF_COLOR, device_colors
+from globals import LOADING_SPAN, OFF_COLOR, DEFAULT_SPIN
 
 
 class Spinning(AnimatedMode):
     color: ()
 
-    def __init__(self, device: Device, desired_state: DeviceState, colors=device_colors):
+    def __init__(self, device: Device, desired_state: DeviceState, colors=DEFAULT_SPIN):
         super().__init__(device, desired_state)
         self.colors = [tuple(x) for i, x in enumerate(colors) if i < 5]
         self._itr = 0

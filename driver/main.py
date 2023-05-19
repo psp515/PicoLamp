@@ -36,7 +36,7 @@ if __name__ == '__main__':
         logger.log("Other init start.", LoggerEnum.INFO)
 
         globals.device_colors = read_colors("config/colors.json")
-
+        
         if len(globals.device_colors) < 1:
             raise SetupError("Invalid colors config. Should contain at least 1 color.")
 

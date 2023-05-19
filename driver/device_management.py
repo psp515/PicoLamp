@@ -86,7 +86,6 @@ def mqtt_new_mode(json: str, device_state: DeviceState, logger: Logger):
     if "brightness" in data:
         device_state.brightness_prev = device_state.brightness
         device_state.brightness = data["brightness"]
-        print(device_state.brightness_prev, device_state.brightness)
 
     if "extend" in data:
         device_state.json = data["extend"]
@@ -96,9 +95,6 @@ def mqtt_new_mode(json: str, device_state: DeviceState, logger: Logger):
 
 def mqtt_ping(json: str, device_state: DeviceState, logger: Logger):
     logger.log(f"Ping.\n{json}", LoggerEnum.INFO)
-    #logger.log(len(device_state.ir._pulses), LoggerEnum.INFO)
-    #logger.log(device_state.ir._state, LoggerEnum.INFO)
-    #logger.log(device_state.ir._timer, LoggerEnum.INFO)
 
 def ir_on(device_state: DeviceState, logger: Logger, message: IRReceiveMessage):
     logger.log(f"ON", LoggerEnum.INFO)

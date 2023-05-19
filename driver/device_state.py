@@ -16,3 +16,5 @@ class DeviceState:
 
         self.push_device_state = False
         self.ir = None
+        
+        self.wifi = []

@@ -15,5 +15,5 @@ def read_json(filename: str):
 
 def read_colors(filename: str):
     data = read_json(filename)
-    colors = [Color(x["r"], x["g"], x["b"], x["name"]) for x in data["colors"]]
+    colors = [[x["r"], x["g"], x["b"]] for x in data["colors"]]
     return colors

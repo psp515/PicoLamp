@@ -20,9 +20,6 @@ class WifiQuality(AnimatedMode):
         self._strip_colors = [device.strip[i] for i in range(len(device.strip))]
         self.prev_color = None
         self.color = UNRESOLVED_CONNECTION
-
-        self._wlan = network.WLAN(network.STA_IF)
-        self._wlan.active(True)
         wlan_config = read_json("config/secrets.json")
         self._wlan_name = wlan_config["ssid"]
 
@@ -110,21 +107,19 @@ class WifiQuality(AnimatedMode):
 
     def _check_connection(self):
         try:
-            ap_list = self._wlan.scan()
-            connected_network = None
+            ap_list = self._desired_state.wifi
+            connection = UNRESOLVED_CONNECTION
             for ap in ap_list:
                 if ap[0].decode() == self._wlan_name:
-                    print(connected_network[3])
-                    if connected_network[3] >= -50:
-                        return EXCELLENT_CONNECTION
-                    elif connected_network[3] >= -60:
-                        return GOOD_CONNECTION
-                    elif connected_network[3] >= -70:
-                        return POOR_CONNECTION
+                    if ap[3] >= -50:
+                        connection = EXCELLENT_CONNECTION
+                    elif ap[3] >= -60:
+                        connection =  GOOD_CONNECTION
+                    elif ap[3] >= -70:
+                        connection =  POOR_CONNECTION
                     else:
-                        return BAD_CONNECTION
-            print("Not found")
-            return UNRESOLVED_CONNECTION
+                        connection = BAD_CONNECTION
+            return connection
         except Exception as e:
             print("Error", e)
             return UNRESOLVED_CONNECTION
