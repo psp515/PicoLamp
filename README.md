@@ -61,10 +61,9 @@ TBA.
 Process | State |
 :-: | :-: |
 Set up, Requirements, Planning | ✔️ |
-Creating Driver | 🚧|
-Documantation | ❌ |
-Lamp 3D Model | ❌ |
-Testing, Conclusions | ❌ |
+Creating Driver | ✔️|
+Documantation | 🚧 |
+Testing, Conclusions | ✔️ |
 
 See the [open issues](https://github.com/psp515/MicroPico/issues) for a full list of tasks (and known issues).
 
