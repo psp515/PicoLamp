@@ -1,0 +1,11 @@
+{
+    "brightness": 0.3,
+    "extend":
+    {
+        "speed": 2,
+        "colors":
+        [
+            [128, 0, 128]
+        ]
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "mode": 5,
+    "data":
+    {
+        "brightness": 0.5,
+        "extend":
+        {
+           "wait":5
+        }
+    }
+}

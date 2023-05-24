@@ -14,10 +14,10 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
+.idea/
 var/
 wheels/
 pip-wheel-metadata/
@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# My
+
+config/
+driver/config/hivemq.json
+driver/config/secrets.json
