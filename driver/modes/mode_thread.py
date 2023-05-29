@@ -12,9 +12,8 @@ from modes.fade import Fade
 from modes.spinning import Spinning
 from modes.rgb_animation import RGB
 from modes.loading import Loading
-from modes.mode import Mode
 from enums.mode_state_enum import ModeStateEnum
-from tools.logger import Logger
+from tools.blink_logger import Logger
 
 
 class ModeThread:
@@ -30,6 +29,7 @@ class ModeThread:
         self._mode_num = 1
 
     def loop(self):
+        self._logger.log("Mode Thread: Starting.", LoggerEnum.INFO)
         self._restart_strip()
 
         while True:
@@ -84,19 +84,22 @@ class ModeThread:
                 self._mode_num = 1
             elif mode == 2:
                 if self._states.json is not None and "speed" in json and "colors" in json and len(json["colors"]) > 0:
-                    self._mode = Blink(self._device, self._states, self._states.json["colors"], self._states.json["speed"])
+                    self._mode = Blink(self._device, self._states, self._states.json["colors"],
+                                       self._states.json["speed"])
                 else:
                     self._mode = Blink(self._device, self._states)
                 self._mode_num = 2
             elif mode == 3:
                 if self._states.json is not None and "speed" in json and "colors" in json and len(json["colors"]) > 0:
-                    self._mode = InstantBlink(self._device, self._states, self._states.json["colors"], self._states.json["speed"])
+                    self._mode = InstantBlink(self._device, self._states, self._states.json["colors"],
+                                              self._states.json["speed"])
                 else:
                     self._mode = InstantBlink(self._device, self._states)
                 self._mode_num = 3
             elif mode == 4:
                 if self._states.json is not None and "speed" in json and "colors" in json and len(json["colors"]) > 0:
-                    self._mode = Loading(self._device, self._states, self._states.json["colors"], self._states.json["speed"])
+                    self._mode = Loading(self._device, self._states, self._states.json["colors"],
+                                         self._states.json["speed"])
                 else:
                     self._mode = Loading(self._device, self._states)
                 self._mode_num = 4
@@ -124,8 +127,9 @@ class ModeThread:
             elif mode == 9:
                 self._mode = Torch(self._device, self._states)
                 self._mode_num = 9
-        except Exception as e:
-            self._logger.log(f"ModeThread: {e}", LoggerEnum.ERROR)
+        except TypeError as e:
+            self._logger.log(f"Mode Thread: {e}", LoggerEnum.ERROR)
+            self._logger.log(f"Mode Thread: Mode didn't changed.", LoggerEnum.INFO)
     
         self._mode.state = ModeStateEnum.STARTING
         
@@ -134,5 +138,5 @@ class ModeThread:
             for led_id in group:
                 self._device.strip[led_id] = (0, 0, 0)
 
-        self._logger.log("Device refreshed.", LoggerEnum.INFO)
+        self._logger.log("Mode Thread: Device refreshed.", LoggerEnum.INFO)
         self._device.strip.write()

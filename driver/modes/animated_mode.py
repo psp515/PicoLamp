@@ -3,6 +3,7 @@ from device_state import DeviceState
 from enums.mode_state_enum import ModeStateEnum
 from modes.mode import Mode
 
+
 class AnimatedMode(Mode):
     def __init__(self, device: Device, desired_state: DeviceState):
         super(AnimatedMode, self).__init__(device, desired_state)
@@ -32,6 +33,7 @@ class AnimatedMode(Mode):
 
     def refresh_led(self):
         """
-        Function ignored. Dynamic modes will update number of working leds dynamically.
+        Function ignored.
+        (most modes will update number of working led-s dynamically)
         """
         pass

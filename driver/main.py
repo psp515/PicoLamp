@@ -14,9 +14,10 @@ from device_management import configure_mqtt, configure_ir
 from device_state import DeviceState
 from exception.setup_error import SetupError
 from subdevices.nec_receiver.nec_receiver import NECReceiver
-from tools.helpers import generate_groups, validate_strip_config, validate_ir_config, validate_wlan_config, \
-    validate_hivemq_config, wait_for_connection
 from tools.logger import Logger
+from tools.initialization_helpers import generate_groups, validate_strip_config, validate_ir_config, validate_wlan_config, \
+    validate_hivemq_config, wait_for_connection
+from tools.blink_logger import BlinkLogger
 from enums.logger_enum import LoggerEnum
 from tools.config_readers import read_json, read_colors
 import globals
@@ -25,20 +26,22 @@ DEBUG = True
 
 if __name__ == '__main__':
     gc.collect()
-    used_pins = [25]
-    led = Pin("LED", Pin.OUT)
-    led.low()
-    logger = Logger(led, DEBUG)
-    logger.log("Logger is working!", LoggerEnum.INFO)
+    logger = Logger(DEBUG)
 
     try:
+        # BlinkLogger
+        used_pins = [25]
+        led = Pin("LED", Pin.OUT)
+        led.low()
+        logger = BlinkLogger(led, DEBUG)
+        logger.log("Logger is working!", LoggerEnum.INFO)
+
         # Others
         logger.log("Other init start.", LoggerEnum.INFO)
 
-        globals.device_colors = read_colors("config/colors.json")
-        
-        if len(globals.device_colors) < 1:
-            raise SetupError("Invalid colors config. Should contain at least 1 color.")
+        globals.DEVICE_COLORS = read_colors("config/colors.json")
+        if len(globals.DEVICE_COLORS) < 2:
+            raise SetupError("Invalid colors config. Should contain at least 2 colors.")
 
         logger.log("Other init finished.", LoggerEnum.INFO)
 
@@ -86,25 +89,21 @@ if __name__ == '__main__':
 
         nec_client = NECClient(nec_receiver, device_state, logger)
         configure_ir(nec_client, ir_config)
-        
-        # TODELETE 
         device_state.ir = nec_receiver
-        
+
         logger.log("NEC init finished.", LoggerEnum.INFO)
         # Starting app
 
         app = App(device, device_state, logger, mqtt_client, mqtt_topics, nec_client, wlan)
         logger.log("App starting!", LoggerEnum.INFO)
         app.start()
-
     except OSError as e:
         logger.log(str(e), LoggerEnum.CONNECTION_ERROR)
     except SetupError as e:
         logger.log(str(e), LoggerEnum.SETUP_ERROR)
-    except Exception as e:
+    except BaseException as e:
         logger.log(str(e), LoggerEnum.ERROR)
     finally:
         if not DEBUG:
             sleep(3)
             reset()
- 

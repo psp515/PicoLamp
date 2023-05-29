@@ -62,7 +62,8 @@ class Torch(AnimatedMode):
 
     def refresh_led(self): pass
 
-    def _generate_color(self):
+    @staticmethod
+    def _generate_color():
         r, g, b = TORCH_MAX
         value = random.randint(0, 100)
 

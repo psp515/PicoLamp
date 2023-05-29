@@ -2,7 +2,7 @@ from umqtt.simple import MQTTClient
 
 from client.watch_client import WatchClient
 from device_state import DeviceState
-from tools.logger import Logger
+from tools.blink_logger import Logger
 from enums.logger_enum import LoggerEnum
 
 
@@ -35,15 +35,15 @@ class HivemqMQTTClient(WatchClient):
             data = data.decode("utf-8")
 
             if topic not in self._topics:
-                self._logger.log(f"{topic} not found in topics.", LoggerEnum.WARNING)
+                self._logger.log(f"DataThread: {topic} not found in topics.", LoggerEnum.WARNING)
                 return
 
             self._topics[topic](data, self._device_state, self._logger)
         except Exception as e:
             self._logger.log(f"Error reciving data from {topic}", LoggerEnum.ERROR)
             self._logger.log(e, LoggerEnum.ERROR)
-        finally:
-            self._logger.log(f"Data from topic '{topic}' received.", LoggerEnum.INFO)
+        else:
+            self._logger.log(f"DataThread:  Data from topic '{topic}' received.", LoggerEnum.INFO)
             self._logger.log(data, LoggerEnum.DEBUG)
 
     def publish(self, topic, message):

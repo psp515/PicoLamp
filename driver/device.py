@@ -1,5 +1,5 @@
-from machine import Pin, UART
 from neopixel import NeoPixel
+
 
 class Device:
     """

@@ -2,7 +2,7 @@ from device import Device
 from device_state import DeviceState
 from modes.animated_mode import AnimatedMode
 from enums.mode_state_enum import ModeStateEnum
-from globals import LOADING_SPAN, OFF_COLOR, device_colors, DEFAULT_FADE
+from globals import LOADING_SPAN, OFF_COLOR, DEVICE_COLORS, DEFAULT_FADE
 from time import ticks_ms, ticks_diff, ticks_add
 
 

@@ -1,5 +1,5 @@
 from device_state import DeviceState
-from tools.logger import Logger
+from tools.blink_logger import Logger
 
 
 class WatchClient:

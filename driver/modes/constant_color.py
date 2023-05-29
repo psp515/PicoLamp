@@ -56,7 +56,7 @@ class ConstantColor(AnimatedMode, ConstantColorNA):
     
     def refresh_led(self):
         self.state = ModeStateEnum.UPDATING
-        self._write_color(self.color) # from ConstantColorNA
+        self._write_color(self.color)
         self.state = ModeStateEnum.ON
         
     def _animate(self, to_color: ()):
