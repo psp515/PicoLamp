@@ -31,8 +31,6 @@ Projet purpose is to create simple LED lamp with use of Raspberry Pi Pico W that
 
 LED used in lamp will be a neopixels. I am aware that using neopixels for Led lamp migth be a bit mismatched but i want to fully take advantage of adressable leds and create interesting modes and animations.
 
-Code documentation: <a href="">TBA</a>.
-
 ### Built With
 
 <div>
@@ -49,12 +47,7 @@ Code documentation: <a href="">TBA</a>.
 
 ### Getting Started
 
-3D files: <a href="">TBA</a>.
-Parts list and device setup guide: <a href="">TBA</a>.
-
-How to put program into Raspberry Pi Pico?
-
-TBA.
+See [docs.pdf](https://github.com/psp515/PicoLamp/blob/main/docs.pdf) for more informations
 
 ### Roadmap
 
