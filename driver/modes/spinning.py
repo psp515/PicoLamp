@@ -2,7 +2,7 @@ from device import Device
 from device_state import DeviceState
 from modes.animated_mode import AnimatedMode
 from enums.mode_state_enum import ModeStateEnum
-from globals import LOADING_SPAN, OFF_COLOR, DEFAULT_SPIN
+from globals import OFF_COLOR, DEFAULT_SPIN
 
 
 class Spinning(AnimatedMode):
@@ -14,6 +14,7 @@ class Spinning(AnimatedMode):
         self._itr = 0
         self._max = self._desired_state.speed
         self._strip_colors = [self._device.strip[i] for i in range(len(self._device.strip))]
+        self._group_counter = None
 
     def end(self):
         self.state = ModeStateEnum.ENDING

@@ -11,7 +11,7 @@ class Blink(Mode):
     def __init__(self, device: Device, device_state: DeviceState, colors=None, speed=None):
         super().__init__(device, device_state)
         if colors == None:
-            colors = globals.device_colors
+            colors = globals.DEVICE_COLORS
         self.colors = [tuple(x) for x in colors]
         self.speed = MINIMUM_BLINK_SPAN if speed is None else max(speed, MINIMUM_BLINK_SPAN)
         self.color = self.colors[0]

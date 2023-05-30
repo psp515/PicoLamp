@@ -11,7 +11,7 @@ class InstantBlink(Mode):
     def __init__(self, device: Device, device_state: DeviceState, colors=None, speed=None):
         super().__init__(device, device_state)
         if colors == None:
-            colors = globals.device_colors
+            colors = globals.DEVICE_COLORS
         print(colors)
         self.colors = [tuple(x) for x in colors]
         print(self.colors)

@@ -1,7 +1,7 @@
 from utime import sleep
 from enums.logger_enum import LoggerEnum
 from exception.setup_error import SetupError
-from tools.logger import Logger
+from tools.blink_logger import Logger
 import network
 
 
@@ -59,6 +59,7 @@ def validate_hivemq_config(config: {}):
         if config[name] is None:
             raise SetupError(f"Invalid hivemq config. (lack of {name})")
 
+
 def _get_status_description(status):
     if status == network.STAT_IDLE:
         return "No connection and no activity"
@@ -72,8 +73,8 @@ def _get_status_description(status):
         return "Failed due to other problems"
     elif status == network.STAT_GOT_IP:
         return "Connection successful"
-    
     return "Unknown"
+
 
 def wait_for_connection(wifi: network.WLAN, logger: Logger):
     sleep(1)

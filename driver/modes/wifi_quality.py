@@ -2,15 +2,12 @@ from device import Device
 from device_state import DeviceState
 from modes.animated_mode import AnimatedMode
 from enums.mode_state_enum import ModeStateEnum
-from globals import OFF_COLOR, UNRESOLVED_CONNECTION, EXCELLENT_CONNECTION, GOOD_CONNECTION, POOR_CONNECTION, \
+from globals import OFF_COLOR, EXCELLENT_CONNECTION, GOOD_CONNECTION, POOR_CONNECTION, \
     BAD_CONNECTION, UNRESOLVED_CONNECTION
-import network
-
 from tools.config_readers import read_json
 
 
 class WifiQuality(AnimatedMode):
-    color: ()
 
     def __init__(self, device: Device, desired_state: DeviceState):
         super().__init__(device, desired_state)
@@ -106,21 +103,20 @@ class WifiQuality(AnimatedMode):
         return tuple([int(self._desired_state.brightness * x) for x in color])
 
     def _check_connection(self):
-        try:
-            ap_list = self._desired_state.wifi
-            connection = UNRESOLVED_CONNECTION
-            for ap in ap_list:
-                if ap[0].decode() == self._wlan_name:
-                    if ap[3] >= -50:
-                        connection = EXCELLENT_CONNECTION
-                    elif ap[3] >= -60:
-                        connection =  GOOD_CONNECTION
-                    elif ap[3] >= -70:
-                        connection =  POOR_CONNECTION
-                    else:
-                        connection = BAD_CONNECTION
-            return connection
-        except Exception as e:
-            print("Error", e)
+        ap_list = self._desired_state.wifi
+
+        if len(ap_list) == 0:
             return UNRESOLVED_CONNECTION
-        
+
+        for ap in ap_list:
+            if ap[0].decode() == self._wlan_name:
+                if ap[3] >= -50:
+                    return EXCELLENT_CONNECTION
+                elif ap[3] >= -60:
+                    return GOOD_CONNECTION
+                elif ap[3] >= -70:
+                    return POOR_CONNECTION
+                else:
+                    return BAD_CONNECTION
+
+        return UNRESOLVED_CONNECTION

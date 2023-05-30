@@ -3,7 +3,7 @@ from device_state import DeviceState
 from enums.logger_enum import LoggerEnum
 from subdevices.nec_receiver.nec_receiver import NECReceiver
 from tools.ir_rx_message import IRReceiveMessage
-from tools.logger import Logger
+from tools.blink_logger import Logger
 
 
 class NECClient(WatchClient):

@@ -1,5 +1,4 @@
 
-
 class DeviceStateEnum:
     OFF = 0,
     ON = 1,
@@ -8,4 +7,3 @@ class DeviceStateEnum:
     UPDATE = 4,
     LED_UPDATE = 5,
     ENDING = 6
-
