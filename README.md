@@ -47,7 +47,9 @@ LED used in lamp will be a neopixels. I am aware that using neopixels for Led la
 
 ### Getting Started
 
-See [docs.pdf](https://github.com/psp515/PicoLamp/blob/main/docs.pdf) for more informations
+See [docs.pdf](https://github.com/psp515/PicoLamp/blob/main/docs.pdf) for more informations.
+
+Example 3D Model: https://www.thingiverse.com/thing:6063299.
 
 ### Roadmap
 
@@ -55,6 +57,7 @@ Process | State |
 :-: | :-: |
 Set up, Requirements, Planning | ✔️ |
 Creating Driver | ✔️|
+Example 3D model | ✔️ |
 Documantation | ✔️ |
 Testing, Conclusions | ✔️ |
 
